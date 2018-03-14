@@ -12,6 +12,7 @@ from django.db import models
 # Table Supplier logs: id, name, quantity supplied, type(food, first aid etc)
 # Table Current stock: current food packets, current first aid packets
 
+
 SHELTER_TYPE_CHOICES =(
     ('g','government'),
     ('a','ad-hoc'),
