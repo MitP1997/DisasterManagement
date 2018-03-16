@@ -14,7 +14,7 @@ class OfficialRegistrationForm(forms.Form):
     Complete form for official registration
     """
     def __init__(self,*args,**kwargs):
-        self.user=kwargs.pop('user',None)
+        self.system_user=kwargs.pop('system_user',None)
         super(OfficialRegistrationForm,self).__init__(*args,**kwargs)
         self.fields['aadhar_number']=forms.CharField(
             max_length=100,
@@ -69,7 +69,7 @@ class CivilianRegistrationForm(forms.Form):
     Complete form for civilian registration
     """
     def __init__(self,*args,**kwargs):
-        self.user=kwargs.pop('user',None)
+        self.system_user=kwargs.pop('system_user',None)
         super(CivilianRegistrationForm,self).__init__(*args,**kwargs)
         self.fields['dob']=forms.CharField(
             max_length=100,

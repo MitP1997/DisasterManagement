@@ -68,6 +68,9 @@ class SystemUsers(AbstractUser):
 class Families(models.Model):
     head_name = models.CharField(max_length=100 )
     number_of_members = models.IntegerField()
+    family_address_line_1 = models.CharField(max_length=100)
+    family_address_line_2 = models.CharField(max_length=100 , blank = True , null = True)
+    family_address_line_3 = models.CharField(max_length=100 , blank = True , null = True)
 
     # def create(self,post):
     #     self.last_name = post.get('last_name')

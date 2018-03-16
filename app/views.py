@@ -25,16 +25,16 @@ class DonationDetailView(DetailView):
     template_name = 'donationApp/donation_detail.html'
 
 class OfficialRegistrationFormView(FormView):
-    template_name = 'donationApp/donate_form.html'
+    template_name = 'html_official_register.html'
     form_class = OfficialRegistrationForm
-    success_url = '/registeredSuccessfully/'
+    success_url = '/OfficialRegisteredSuccessfully/'
 
     def get_form_kwargs(self):
         logger.info('called get form kwargs')
         kwargs=super(OfficialRegistrationFormView,self).get_form_kwargs()
         try:
-            user=UserModel.objects.get(email=self.request.user.email)
-            kwargs['user']=user
+            system_user=SystemUsers.objects.get(email=self.request.user.email)
+            kwargs['system_user']=system_user
         except:
             #object does not exist
             raise
@@ -42,44 +42,39 @@ class OfficialRegistrationFormView(FormView):
 
     def get_context_data(self, **kwargs):
         logger.info('called get context')
-        context=super(DonationFormView,self).get_context_data()
+        context=super(OfficialRegistrationFormView,self).get_context_data()
         form=self.get_form(self.form_class)
         context['form']=form
-        FoodItemFormset=formset_factory(FoodItemForm,extra=1, can_delete=True)
-        food_formset=FoodItemFormset()
-        context['food_formset']=food_formset
+        # FoodItemFormset=formset_factory(FoodItemForm,extra=1, can_delete=True)
+        # food_formset=FoodItemFormset()
+        # context['food_formset']=food_formset
         return context
 
     def post(self, request, *args, **kwargs):
-        user = UserModel.objects.get(email=request.user.email)
+        system_user = SystemUser.objects.get(email=request.user.email)
         logger.info(user)
-        donation=DonationModel()
-        donor_form= DonorDetailsForm(request.POST,user=user)
-        FoodItemFormset=formset_factory(FoodItemForm)
-        fooditem_formset=FoodItemFormset(request.POST)
+        system_user=SystemUser()
+        # official_registeration_form= OfficialRegistrationForm(request.POST,user=user)
+        official_registeration_form= OfficialRegistrationForm(request.POST,user=user)
 
-        if donor_form.is_valid() and fooditem_formset.is_valid():
-            donation.donor=donor_form.cleaned_data.get('donor_name')
-            donation.donor_address=donor_form.cleaned_data.get('donor_address')
-            donation.donor_email=user.email
-            donation.donor_contact=donor_form.cleaned_data.get('donor_contact')
+        if official_registeration_form.is_valid():
+            system_user.name=official_registeration_form.cleaned_data.get('name')
+            system_user.email=official_registeration_form.cleaned_data.get('email')
+            system_user.password=official_registeration_form.cleaned_data.get('password')
+            system_user.aadhar_number=official_registeration_form.cleaned_data.get('aadhar_number')
+            system_user.dob=official_registeration_form.cleaned_data.get('dob')
+            system_user.gender=official_registeration_form.cleaned_data.get('gender')
+            system_user.contact=official_registeration_form.cleaned_data.get('contact')
+            system_user.address_line_1=official_registeration_form.cleaned_data.get('address_line_1')
+            system_user.address_line_2=official_registeration_form.cleaned_data.get('address_line_2')
+            system_user.address_line_3=official_registeration_form.cleaned_data.get('address_line_3')
+            system_user.save()
 
-            food_items={}
-            for forms in fooditem_formset:
-                food_items[forms.cleaned_data.get('food_name')]=forms.cleaned_data.get('food_quantity')
-
-            donation.donation_items=food_items
-            donation.save()
-
-            return self.form_valid(donor_form,donation)
+            return self.form_valid(official_registeration_form,system_user)
 
     def form_valid(self, form,donation_object):
-        e=EmailMessage()
-        e.subject="New Donation Made!"
-        e.body="View the detailed donation from {} here: {}".format(form.donor,donation_object.get_absolute_url())
-        e.to=UserModel.objects.filter(user_type='receiver')
-        e.send()
-        return super(DonationFormView, self).form_valid(form)
+        # Additional system user registration functionaity here (Maybe an Email??)
+        return super(OfficialRegistrationFormView, self).form_valid(form)
 
 
 class Globals():
@@ -93,35 +88,35 @@ class Globals():
         response['status'] = 1
         response['data'] = arr
         return HttpResponse(json.dumps(response), status=200, content_type="application/json")
-
-class Civilian():
-    data = {}
-
-    def __init__(self):
-        self.data = {}
-
-    def registerFamily(self,request):
-        if request.method == "GET":
-            return render(request,'register_family.html')
-        else:
-            family = Families()
-            family.create(request.POST) # This function is to reduce the LOC here in views.py
-            if request.POST.get('api') is not None:
-                self.data['family_id'] = family.id
-                response = Globals().success(self.data)
-            else:
-                response = redirect('register-family')
-            return response
-
-    def registerCivilian(self,request):
-        if request.method == "GET":
-            return render(request,'register_civilian.html')
-        else:
-            civilian = Civilians()
-            civilian.create(request.POST)
-            if request.POST.get('api') is not None:
-                self.data['civilian_id'] = civilian.id
-                response = Globals().success(self.data)
-            else:
-                response = redirect('register-civilian')
-            return response
+#
+# class Civilian():
+#     data = {}
+#
+#     def __init__(self):
+#         self.data = {}
+#
+#     def registerFamily(self,request):
+#         if request.method == "GET":
+#             return render(request,'register_family.html')
+#         else:
+#             family = Families()
+#             family.create(request.POST) # This function is to reduce the LOC here in views.py
+#             if request.POST.get('api') is not None:
+#                 self.data['family_id'] = family.id
+#                 response = Globals().success(self.data)
+#             else:
+#                 response = redirect('register-family')
+#             return response
+#
+#     def registerCivilian(self,request):
+#         if request.method == "GET":
+#             return render(request,'register_civilian.html')
+#         else:
+#             civilian = Civilians()
+#             civilian.create(request.POST)
+#             if request.POST.get('api') is not None:
+#                 self.data['civilian_id'] = civilian.id
+#                 response = Globals().success(self.data)
+#             else:
+#                 response = redirect('register-civilian')
+#             return response
