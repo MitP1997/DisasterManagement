@@ -52,13 +52,10 @@ class CurrentStock(models.Model):
     first_aid_packets_available = models.IntegerField()
     bedding_packets_available = models.IntegerField()
     water_available = models.IntegerField()
-    
+
 class SystemUsers(AbstractUser):
     shelter = models.ForeignKey(Shelter)
-    first_name = models.CharField(max_length=100 )
-    last_name = models.CharField(max_length=100 )
     contact = models.IntegerField()
-    email = models.CharField(max_length=100)
     add_line_1 = models.CharField(max_length=100)
     add_line_2 = models.CharField(max_length=100 , blank = True , null = True)
     add_line_3 = models.CharField(max_length=100 , blank = True , null = True)
@@ -70,10 +67,15 @@ class Families(models.Model):
     last_name = models.CharField(max_length=100 )
     number_of_members = models.IntegerField()
 
+    def create(self,post):
+        self.last_name = post.get('last_name')
+        self.number_of_members = post.get('number_of_members')
+        self.save()
+
 class Civilians(models.Model):
     family = models.ForeignKey(Families)
-    current_shelter = models.ForeignKey(Shelter, related_name='current_shelter')
-    allocated_shelter = models.ForeignKey(Shelter, related_name='allocated_shelter')
+    current_shelter = models.ForeignKey(Shelter, related_name='current_shelter', null = True, blank = True)
+    allocated_shelter = models.ForeignKey(Shelter, related_name='allocated_shelter', null = True, blank = True)
     first_name = models.CharField(max_length=100 )
     last_name = models.CharField(max_length=100 )
     contact = models.IntegerField()
@@ -84,10 +86,32 @@ class Civilians(models.Model):
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
+    pincode = models.IntegerField()
     gender = models.CharField(max_length=10,choices = GENDER_CHOICES)
     aadhar_number = models.IntegerField()
     blood_group = models.CharField(max_length=100)
-    parent_gaurdian = models.CharField(max_length=100)
+    parent_gaurdian = models.CharField(max_length=100) #DOUBT shouldnt this be a foreignkey and null allowed
+
+    def create(self,post):
+        self.family = Families().objects.get(id=post.get('family_id'))
+        self.first_name = post.get('first_name')
+        self.last_name = post.get('last_name')
+        self.contact = post.get('contact')
+        self.email = post.get('email')
+        self.add_line_1 = post.get('add_line_1')
+        if post.get('add_line_2') is not None:
+            self.add_line_2 = post.get('add_line_2')
+        if post.get('add_line_3') is not None:
+            self.add_line_3 = post.get('add_line_3')
+        self.city = post.get('city')
+        self.state = post.get('state')
+        self.country = post.get('country')
+        self.pincode = post.get('pincode')
+        self.gender = post.get('gender')
+        self.aadhar_number = post.get('aadhar_number')
+        self.blood_group = post.get('blood_group')
+        self.parent_gaurdian = post.get('parent_gaurdian')
+        self.save()
 
 
 class SupplierLogs(models.Model):
