@@ -21,6 +21,7 @@ SHELTER_TYPE_CHOICES =(
 GENDER_CHOICES = (
     ('m', 'Male'),
     ('f', 'Female'),
+    ('o', 'Other'),
 )
 
 ROLE_CHOICES = (
@@ -56,33 +57,36 @@ class CurrentStock(models.Model):
 class SystemUsers(AbstractUser):
     shelter = models.ForeignKey(Shelter)
     contact = models.IntegerField()
-    add_line_1 = models.CharField(max_length=100)
-    add_line_2 = models.CharField(max_length=100 , blank = True , null = True)
-    add_line_3 = models.CharField(max_length=100 , blank = True , null = True)
+    dob = models.CharField()
+    address_line_1 = models.CharField(max_length=100)
+    address_line_2 = models.CharField(max_length=100 , blank = True , null = True)
+    address_line_3 = models.CharField(max_length=100 , blank = True , null = True)
     gender = models.CharField(max_length=10, choices = GENDER_CHOICES)
     aadhar_number = models.IntegerField()
     user_role = models.CharField(max_length=10, choices = ROLE_CHOICES)
 
 class Families(models.Model):
-    last_name = models.CharField(max_length=100 )
+    head_name = models.CharField(max_length=100 )
     number_of_members = models.IntegerField()
 
-    def create(self,post):
-        self.last_name = post.get('last_name')
-        self.number_of_members = post.get('number_of_members')
-        self.save()
+    # def create(self,post):
+    #     self.last_name = post.get('last_name')
+    #     self.number_of_members = post.get('number_of_members')
+    #     self.save()
 
 class Civilians(models.Model):
     family = models.ForeignKey(Families)
     current_shelter = models.ForeignKey(Shelter, related_name='current_shelter', null = True, blank = True)
     allocated_shelter = models.ForeignKey(Shelter, related_name='allocated_shelter', null = True, blank = True)
     first_name = models.CharField(max_length=100 )
+    middle_name = models.CharField(max_length=100 )
     last_name = models.CharField(max_length=100 )
     contact = models.IntegerField()
+    dob = models.CharField()
     email = models.CharField(max_length=100)
-    add_line_1 = models.CharField(max_length=100)
-    add_line_2 = models.CharField(max_length=100, blank = True, null = True)
-    add_line_3 = models.CharField(max_length=100, blank = True, null = True)
+    address_line_1 = models.CharField(max_length=100)
+    address_line_2 = models.CharField(max_length=100, blank = True, null = True)
+    address_line_3 = models.CharField(max_length=100, blank = True, null = True)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
@@ -98,11 +102,11 @@ class Civilians(models.Model):
         self.last_name = post.get('last_name')
         self.contact = post.get('contact')
         self.email = post.get('email')
-        self.add_line_1 = post.get('add_line_1')
-        if post.get('add_line_2') is not None:
-            self.add_line_2 = post.get('add_line_2')
-        if post.get('add_line_3') is not None:
-            self.add_line_3 = post.get('add_line_3')
+        self.address_line_1 = post.get('address_line_1')
+        if post.get('address_line_2') is not None:
+            self.address_line_2 = post.get('address_line_2')
+        if post.get('address_line_3') is not None:
+            self.address_line_3 = post.get('address_line_3')
         self.city = post.get('city')
         self.state = post.get('state')
         self.country = post.get('country')
