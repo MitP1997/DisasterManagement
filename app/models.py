@@ -46,7 +46,6 @@ class Shelter(models.Model):
     shelter_longitude = models.DecimalField(max_digits=9,decimal_places=6)
     shelter_type = models.CharField(max_length=10,choices = SHELTER_TYPE_CHOICES)
 
-
 class CurrentStock(models.Model):
     current_stock = models.ForeignKey(Shelter)
     food_packets_available = models.IntegerField()
@@ -54,16 +53,6 @@ class CurrentStock(models.Model):
     bedding_packets_available = models.IntegerField()
     water_available = models.IntegerField()
 
-class SystemUsers(AbstractUser):
-    shelter = models.ForeignKey(Shelter)
-    contact = models.IntegerField()
-    dob = models.CharField()
-    address_line_1 = models.CharField(max_length=100)
-    address_line_2 = models.CharField(max_length=100 , blank = True , null = True)
-    address_line_3 = models.CharField(max_length=100 , blank = True , null = True)
-    gender = models.CharField(max_length=10, choices = GENDER_CHOICES)
-    aadhar_number = models.IntegerField()
-    user_role = models.CharField(max_length=10, choices = ROLE_CHOICES)
 
 class Families(models.Model):
     head_name = models.CharField(max_length=100 )
@@ -72,54 +61,66 @@ class Families(models.Model):
     family_address_line_2 = models.CharField(max_length=100 , blank = True , null = True)
     family_address_line_3 = models.CharField(max_length=100 , blank = True , null = True)
 
-    # def create(self,post):
-    #     self.last_name = post.get('last_name')
-    #     self.number_of_members = post.get('number_of_members')
-    #     self.save()
-
-class Civilians(models.Model):
-    family = models.ForeignKey(Families)
-    current_shelter = models.ForeignKey(Shelter, related_name='current_shelter', null = True, blank = True)
-    allocated_shelter = models.ForeignKey(Shelter, related_name='allocated_shelter', null = True, blank = True)
-    first_name = models.CharField(max_length=100 )
-    middle_name = models.CharField(max_length=100 )
-    last_name = models.CharField(max_length=100 )
-    contact = models.IntegerField()
-    dob = models.CharField()
-    email = models.CharField(max_length=100)
-    address_line_1 = models.CharField(max_length=100)
-    address_line_2 = models.CharField(max_length=100, blank = True, null = True)
-    address_line_3 = models.CharField(max_length=100, blank = True, null = True)
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
-    pincode = models.IntegerField()
-    gender = models.CharField(max_length=10,choices = GENDER_CHOICES)
-    aadhar_number = models.IntegerField()
-    blood_group = models.CharField(max_length=100)
-    parent_gaurdian = models.CharField(max_length=100) #DOUBT shouldnt this be a foreignkey and null allowed
-
-    def create(self,post):
-        self.family = Families().objects.get(id=post.get('family_id'))
-        self.first_name = post.get('first_name')
-        self.last_name = post.get('last_name')
-        self.contact = post.get('contact')
-        self.email = post.get('email')
-        self.address_line_1 = post.get('address_line_1')
-        if post.get('address_line_2') is not None:
-            self.address_line_2 = post.get('address_line_2')
-        if post.get('address_line_3') is not None:
-            self.address_line_3 = post.get('address_line_3')
-        self.city = post.get('city')
-        self.state = post.get('state')
-        self.country = post.get('country')
-        self.pincode = post.get('pincode')
-        self.gender = post.get('gender')
-        self.aadhar_number = post.get('aadhar_number')
-        self.blood_group = post.get('blood_group')
-        self.parent_gaurdian = post.get('parent_gaurdian')
+    def create(self,family_registration_form):
+        self.head_name = family_registration_form.cleaned_data.get('head_name')
+        self.number_of_members = family_registration_form.cleaned_data.get('number_of_members')
+        self.family_address_line_1 = family_registration_form.cleaned_data.get('family_address_line_1')
+        self.family_address_line_2 = family_registration_form.cleaned_data.get('family_address_line_2')
+        self.family_address_line_3 = family_registration_form.cleaned_data.get('family_address_line_3')
         self.save()
 
+class Civilians(AbstractUser):
+    family = models.ForeignKey(Families, null = True, blank = True)
+    first_name = models.CharField(max_length=30)
+    middle_name = models.CharField(max_length=30, blank = True, null = True)
+    last_name = models.CharField(max_length=30)
+    contact = models.IntegerField(blank = True , null = True)
+    dob = models.DateField( blank = True , null = True)
+    address_line_1 = models.CharField(max_length=100, blank = True , null = True)
+    address_line_2 = models.CharField(max_length=100 , blank = True , null = True)
+    address_line_3 = models.CharField(max_length=100 , blank = True , null = True)
+    gender = models.CharField(max_length=10, choices = GENDER_CHOICES,default='m')
+    aadhar_number = models.IntegerField(blank = True , null = True)
+    city = models.CharField(max_length=100, null = True, blank = True)
+    state = models.CharField(max_length=100, null = True, blank = True)
+    country = models.CharField(max_length=100, null = True, blank = True)
+    pincode = models.IntegerField(blank = True, null = True)
+    blood_group = models.CharField(max_length=100, null = True, blank = True)
+    parent_gaurdian = models.CharField(max_length=100, blank = True, null = True)
+    current_shelter = models.ForeignKey(Shelter, related_name='current_shelter', null = True, blank = True)
+    allocated_shelter = models.ForeignKey(Shelter, related_name='allocated_shelter', null = True, blank = True)
+
+    def create(self,civilian_registration_form):
+        self.first_name = civilian_registration_form.cleaned_data.get('first_name')
+        self.middle_name = civilian_registration_form.cleaned_data.get('middle_name')
+        self.last_name = civilian_registration_form.cleaned_data.get('last_name')
+        self.contact = civilian_registration_form.cleaned_data.get('contact')
+        self.dob = civilian_registration_form.cleaned_data.get('dob')
+        self.email = civilian_registration_form.cleaned_data.get('email')
+        self.username = civilian_registration_form.cleaned_data.get('email')
+        self.address_line_1 = civilian_registration_form.cleaned_data.get('address_line_1')
+        self.address_line_2 = civilian_registration_form.cleaned_data.get('address_line_2')
+        self.address_line_3 = civilian_registration_form.cleaned_data.get('address_line_3')
+        self.city = civilian_registration_form.cleaned_data.get('city')
+        self.state = civilian_registration_form.cleaned_data.get('state')
+        self.country = civilian_registration_form.cleaned_data.get('country')
+        self.pincode = civilian_registration_form.cleaned_data.get('pincode')
+        self.gender = civilian_registration_form.cleaned_data.get('gender')
+        self.aadhar_number = civilian_registration_form.cleaned_data.get('aadhar_number')
+        self.blood_group = civilian_registration_form.cleaned_data.get('blood_group')
+        self.parent_gaurdian = civilian_registration_form.cleaned_data.get('parent_gaurdian')
+        self.set_password(civilian_registration_form.cleaned_data.get('password'))
+        self.save()
+
+class SystemUsers(models.Model):
+    civilian = models.ForeignKey(Civilians)
+    shelter = models.ForeignKey(Shelter,blank=True,null=True)
+    user_role = models.CharField(max_length=10, choices = ROLE_CHOICES, blank = True , null = True)
+
+    def create(self,registration_form):
+        self.civilian=Civilian.objects.get(username = registration_form.cleaned_data.get('email'))
+        self.user_role=registration_form.cleaned_data.get('role')
+        self.save()
 
 class SupplierLogs(models.Model):
     supplier = models.ForeignKey(SystemUsers)

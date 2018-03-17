@@ -1,14 +1,14 @@
+from __future__ import unicode_literals
 import logging
 
-from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from .models import *
-
-from forms import OfficialRegistrationForm, CivilianRegistrationForm
-from django.forms.formsets import formset_factory
+from forms import *
 from django.views.generic.edit import FormView
 
+
+from django.forms.formsets import formset_factory
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
@@ -16,6 +16,7 @@ logging.basicConfig(level=logging.INFO)
 logger=logging.getLogger(__name__)
 
 # Create your views here.
+"""
 class DonationListView(ListView):
     queryset = DonationModel.objects.filter(receiver='')
     template_name = 'donationApp/donation_list.html'
@@ -23,21 +24,15 @@ class DonationListView(ListView):
 class DonationDetailView(DetailView):
     model = DonationModel
     template_name = 'donationApp/donation_detail.html'
-
+"""
 class OfficialRegistrationFormView(FormView):
-    template_name = 'html_official_register.html'
+    template_name = 'official_register.html'
     form_class = OfficialRegistrationForm
-    success_url = '/OfficialRegisteredSuccessfully/'
+    success_url = '/official-registered-successfully/'
 
     def get_form_kwargs(self):
         logger.info('called get form kwargs')
         kwargs=super(OfficialRegistrationFormView,self).get_form_kwargs()
-        try:
-            system_user=SystemUsers.objects.get(email=self.request.user.email)
-            kwargs['system_user']=system_user
-        except:
-            #object does not exist
-            raise
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -45,37 +40,75 @@ class OfficialRegistrationFormView(FormView):
         context=super(OfficialRegistrationFormView,self).get_context_data()
         form=self.get_form(self.form_class)
         context['form']=form
-        # FoodItemFormset=formset_factory(FoodItemForm,extra=1, can_delete=True)
-        # food_formset=FoodItemFormset()
-        # context['food_formset']=food_formset
         return context
 
     def post(self, request, *args, **kwargs):
-        system_user = SystemUser.objects.get(email=request.user.email)
-        logger.info(user)
-        system_user=SystemUser()
-        # official_registeration_form= OfficialRegistrationForm(request.POST,user=user)
-        official_registeration_form= OfficialRegistrationForm(request.POST,user=user)
+        official_registration_form= OfficialRegistrationForm(request.POST)
+        if official_registration_form.is_valid():
+            system_user=SystemUsers()
+            system_user.create(official_registration_form)
+            return self.form_valid(official_registration_form,system_user)
 
-        if official_registeration_form.is_valid():
-            system_user.name=official_registeration_form.cleaned_data.get('name')
-            system_user.email=official_registeration_form.cleaned_data.get('email')
-            system_user.password=official_registeration_form.cleaned_data.get('password')
-            system_user.aadhar_number=official_registeration_form.cleaned_data.get('aadhar_number')
-            system_user.dob=official_registeration_form.cleaned_data.get('dob')
-            system_user.gender=official_registeration_form.cleaned_data.get('gender')
-            system_user.contact=official_registeration_form.cleaned_data.get('contact')
-            system_user.address_line_1=official_registeration_form.cleaned_data.get('address_line_1')
-            system_user.address_line_2=official_registeration_form.cleaned_data.get('address_line_2')
-            system_user.address_line_3=official_registeration_form.cleaned_data.get('address_line_3')
-            system_user.save()
-
-            return self.form_valid(official_registeration_form,system_user)
-
-    def form_valid(self, form,donation_object):
+    def form_valid(self, form,form_object):
         # Additional system user registration functionaity here (Maybe an Email??)
         return super(OfficialRegistrationFormView, self).form_valid(form)
 
+class CivilianRegistrationFormView(FormView):
+    template_name = 'civilian_register.html'
+    form_class = CivilianRegistrationForm
+    success_url = '/civilian-registered-successfully/'
+
+    def get_form_kwargs(self):
+        logger.info('called get form kwargs')
+        kwargs=super(CivilianRegistrationFormView,self).get_form_kwargs()
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        logger.info('called get context')
+        context=super(CivilianRegistrationFormView,self).get_context_data()
+        form=self.get_form(self.form_class)
+        context['form']=form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        civilian_registration_form= CivilianRegistrationForm(request.POST)
+        if civilian_registration_form.is_valid():
+            civilian=Civilians()
+            civilian.create(civilian_registration_form)
+            return self.form_valid(civilian_registration_form,civilian)
+
+    def form_valid(self, form, form_object):
+        # Additional system user registration functionaity here (Maybe an Email??)
+        return super(CivilianRegistrationFormView, self).form_valid(form)
+
+class FamilyRegistrationFormView(FormView):
+    template_name = 'family_register.html'
+    form_class = FamilyRegistrationForm
+    success_url = '/family-registered-successfully/'
+
+    def get_form_kwargs(self):
+        logger.info('called get form kwargs')
+        kwargs=super(FamilyRegistrationFormView,self).get_form_kwargs()
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        logger.info('called get context')
+        context=super(FamilyRegistrationFormView,self).get_context_data()
+        form=self.get_form(self.form_class)
+        context['form']=form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        family_registration_form= FamilyRegistrationForm(request.POST)
+
+        if family_registration_form.is_valid():
+            family=Families()
+            family.create(family_registration_form)
+            return self.form_valid(family_registration_form,family)
+
+    def form_valid(self, form,form_object):
+        # Additional system user registration functionaity here (Maybe an Email??)
+        return super(FamilyRegistrationFormView, self).form_valid(form)
 
 class Globals():
     response = {}
