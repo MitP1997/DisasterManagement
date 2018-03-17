@@ -56,7 +56,7 @@ class OfficialRegistrationForm(forms.Form):
             }),
             help_text="Address Line 2"
         )
-        self.fields['address_line_2']=forms.CharField(
+        self.fields['address_line_3']=forms.CharField(
             max_length=100,
             widget=forms.TextInput(attrs={
                 'title':'Address Line 3 of the official'
