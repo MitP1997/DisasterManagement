@@ -1,0 +1,634 @@
+{% extends '../base.html' %}
+{% load staticfiles %}
+
+        <!-- Styles -->
+{% block css %}
+    <link href="{% static "css/lib/weather-icons.css" %}" rel="stylesheet" />
+    <link href="{% static "css/lib/owl.carousel.min.css"  %}" rel="stylesheet" />
+    <link href="{% static "css/lib/owl.theme.default.min.css" %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <!-- /# row -->
+                <section id="main-content">
+                        <div class="row">
+                            
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="stat-widget-one">
+                                        <div class="stat-icon dib"><i class="ti-user color-primary border-primary"></i></div>
+                                        <div class="stat-content dib">
+                                            <div class="stat-text">Capacity</div>
+                                            <div class="stat-digit">{{ shelter.total_capacity_of_people }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="stat-widget-one">
+                                        <div class="stat-icon dib"><i class="ti-package color-primary border-primary"></i></div>
+                                        <div class="stat-content dib">
+                                            <div class="stat-text">Food Packet Requirement</div>
+                                            <div class="stat-digit">{{ shelter.food_packets_needed }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="stat-widget-one">
+                                        <div class="stat-icon dib"><i class="ti-plus color-danger border-danger"></i></div>
+                                        <div class="stat-content dib">
+                                            <div class="stat-text">First Aid Packet Requirement</div>
+                                            <div class="stat-digit">{{ shelter.food_packets_needed }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card">
+                                    <div class="card-title">
+                                        <h4>Fee Collections and Expenses</h4>
+
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="ct-bar-chart m-t-30"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="card">
+
+                                    <div class="card-body">
+                                        <div class="ct-pie-chart"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- <div class="col-lg-4">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="card bg-primary">
+                                            <div class="weather-widget">
+                                                <div id="weather-one" class="weather-one p-22"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="card">
+                                            <div class="testimonial-widget-one p-17">
+                                                <div class="testimonial-widget-one owl-carousel owl-theme">
+                                                    <div class="item">
+                                                        <div class="testimonial-content">
+                                                            <div class="testimonial-text">
+                                                                <i class="fa fa-quote-left"></i> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                                                                nostrud exercitation <i class="fa fa-quote-right"></i>
+                                                            </div>
+                                                            <img class="testimonial-author-img" src="assets/images/avatar/1.jpg" alt="" />
+                                                            <div class="testimonial-author">TYRION LANNISTER</div>
+                                                            <div class="testimonial-author-position">Founder-Ceo. Dell Corp</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="testimonial-content">
+                                                            <div class="testimonial-text">
+                                                                <i class="fa fa-quote-left"></i> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                                                                nostrud exercitation <i class="fa fa-quote-right"></i>
+                                                            </div>
+                                                            <img class="testimonial-author-img" src="assets/images/avatar/1.jpg" alt="" />
+                                                            <div class="testimonial-author">TYRION LANNISTER</div>
+                                                            <div class="testimonial-author-position">Founder-Ceo. Dell Corp</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="testimonial-content">
+                                                            <div class="testimonial-text">
+                                                                <i class="fa fa-quote-left"></i> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                                                                nostrud exercitation <i class="fa fa-quote-right"></i>
+                                                            </div>
+                                                            <img class="testimonial-author-img" src="assets/images/avatar/1.jpg" alt="" />
+                                                            <div class="testimonial-author">TYRION LANNISTER</div>
+                                                            <div class="testimonial-author-position">Founder-Ceo. Dell Corp</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="testimonial-content">
+                                                            <div class="testimonial-text">
+                                                                <i class="fa fa-quote-left"></i> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                                                                nostrud exercitation <i class="fa fa-quote-right"></i>
+                                                            </div>
+                                                            <img class="testimonial-author-img" src="assets/images/avatar/1.jpg" alt="" />
+                                                            <div class="testimonial-author">TYRION LANNISTER</div>
+                                                            <div class="testimonial-author-position">Founder-Ceo. Dell Corp</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="testimonial-content">
+                                                            <div class="testimonial-text">
+                                                                <i class="fa fa-quote-left"></i> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                                                                nostrud exercitation <i class="fa fa-quote-right"></i>
+                                                            </div>
+                                                            <img class="testimonial-author-img" src="assets/images/avatar/1.jpg" alt="" />
+                                                            <div class="testimonial-author">TYRION LANNISTER</div>
+                                                            <div class="testimonial-author-position">Founder-Ceo. Dell Corp</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="testimonial-content">
+                                                            <div class="testimonial-text">
+                                                                <i class="fa fa-quote-left"></i> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                                                                nostrud exercitation <i class="fa fa-quote-right"></i>
+                                                            </div>
+                                                            <img class="testimonial-author-img" src="assets/images/avatar/1.jpg" alt="" />
+                                                            <div class="testimonial-author">TYRION LANNISTER</div>
+                                                            <div class="testimonial-author-position">Founder-Ceo. Dell Corp</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!-- /# column -->
+                            <!-- <div class="col-lg-8">
+                                <div class="card">
+                                    <div class="card-title pr">
+                                        <h4>All Exam Result</h4>
+
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table student-data-table m-t-20">
+                                                <thead>
+                                                    <tr>
+                                                        <th><label><input type="checkbox" value=""></label>Exam Name</th>
+                                                        <th>Subject</th>
+                                                        <th>Grade Point</th>
+                                                        <th>Percent Form</th>
+                                                        <th>Percent Upto</th>
+                                                        <th>Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Class Test</td>
+                                                        <td>Mathmatics</td>
+                                                        <td>
+                                                            4.00
+                                                        </td>
+                                                        <td>
+                                                            95.00
+                                                        </td>
+                                                        <td>
+                                                            100
+                                                        </td>
+                                                        <td>20/04/2017</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Class Test</td>
+                                                        <td>Mathmatics</td>
+                                                        <td>
+                                                            4.00
+                                                        </td>
+                                                        <td>
+                                                            95.00
+                                                        </td>
+                                                        <td>
+                                                            100
+                                                        </td>
+                                                        <td>20/04/2017</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Class Test</td>
+                                                        <td>English</td>
+                                                        <td>
+                                                            4.00
+                                                        </td>
+                                                        <td>
+                                                            95.00
+                                                        </td>
+                                                        <td>
+                                                            100
+                                                        </td>
+                                                        <td>20/04/2017</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Class Test</td>
+                                                        <td>Bangla</td>
+                                                        <td>
+                                                            4.00
+                                                        </td>
+                                                        <td>
+                                                            95.00
+                                                        </td>
+                                                        <td>
+                                                            100
+                                                        </td>
+                                                        <td>20/04/2017</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Class Test</td>
+                                                        <td>Mathmatics</td>
+                                                        <td>
+                                                            4.00
+                                                        </td>
+                                                        <td>
+                                                            95.00
+                                                        </td>
+                                                        <td>
+                                                            100
+                                                        </td>
+                                                        <td>20/04/2017</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Class Test</td>
+                                                        <td>English</td>
+                                                        <td>
+                                                            4.00
+                                                        </td>
+                                                        <td>
+                                                            95.00
+                                                        </td>
+                                                        <td>
+                                                            100
+                                                        </td>
+                                                        <td>20/04/2017</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Class Test</td>
+                                                        <td>Mathmatics</td>
+                                                        <td>
+                                                            4.00
+                                                        </td>
+                                                        <td>
+                                                            95.00
+                                                        </td>
+                                                        <td>
+                                                            100
+                                                        </td>
+                                                        <td>20/04/2017</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!-- /# column -->
+                        </div>
+                        <!-- /# row -->
+                        <!-- <div class="row">
+                            <div class="col-lg-3">
+                                <div class="card p-0">
+                                    <div class="stat-widget-three home-widget-three">
+                                        <div class="stat-icon bg-facebook">
+                                            <i class="ti-facebook"></i>
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-digit">8,268</div>
+                                            <div class="stat-text">Likes</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="card p-0">
+                                    <div class="stat-widget-three home-widget-three">
+                                        <div class="stat-icon bg-youtube">
+                                            <i class="ti-youtube"></i>
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-digit">12,545</div>
+                                            <div class="stat-text">Subscribes</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="card p-0">
+                                    <div class="stat-widget-three home-widget-three">
+                                        <div class="stat-icon bg-twitter">
+                                            <i class="ti-twitter"></i>
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-digit">7,982</div>
+                                            <div class="stat-text">Tweets</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="card p-0">
+                                    <div class="stat-widget-three home-widget-three">
+                                        <div class="stat-icon bg-danger">
+                                            <i class="ti-linkedin"></i>
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-digit">9,658</div>
+                                            <div class="stat-text">Followers</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="row">
+                           <!-- <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="year-calendar"></div>
+                                    </div>
+                                </div>
+                              
+                            </div> 
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-title">
+                                        <h4>Notice Board </h4>
+
+                                    </div>
+                                    <div class="recent-comment m-t-15">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <a href="#"><img class="media-object" src="assets/images/avatar/1.jpg" alt="..."></a>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="media-heading color-primary">john doe</h4>
+                                                <p>Cras sit amet nibh libero, in gravida nulla.</p>
+                                                <p class="comment-date">10 min ago</p>
+                                            </div>
+                                        </div>
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <a href="#"><img class="media-object" src="assets/images/avatar/2.jpg" alt="..."></a>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="media-heading color-success">Mr. John</h4>
+                                                <p>Cras sit amet nibh libero, in gravida nulla.</p>
+                                                <p class="comment-date">1 hour ago</p>
+                                            </div>
+                                        </div>
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <a href="#"><img class="media-object" src="assets/images/avatar/3.jpg" alt="..."></a>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="media-heading color-danger">Mr. John</h4>
+                                                <p>Cras sit amet nibh libero, in gravida nulla.</p>
+                                                <div class="comment-date">Yesterday</div>
+                                            </div>
+                                        </div>
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <a href="#"><img class="media-object" src="assets/images/avatar/1.jpg" alt="..."></a>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="media-heading color-primary">john doe</h4>
+                                                <p>Cras sit amet nibh libero, in gravida nulla.</p>
+                                                <p class="comment-date">10 min ago</p>
+                                            </div>
+                                        </div>
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <a href="#"><img class="media-object" src="assets/images/avatar/2.jpg" alt="..."></a>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="media-heading color-success">Mr. John</h4>
+                                                <p>Cras sit amet nibh libero, in gravida nulla.</p>
+                                                <p class="comment-date">1 hour ago</p>
+                                            </div>
+                                        </div>
+                                        <div class="media no-border">
+                                            <div class="media-left">
+                                                <a href="#"><img class="media-object" src="assets/images/avatar/3.jpg" alt="..."></a>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="media-heading color-info">Mr. John</h4>
+                                                <p>Cras sit amet nibh libero, in gravida nulla.</p>
+                                                <div class="comment-date">Yesterday</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!-- /# column -->
+                            <!-- /# column -->
+                           <!--  <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-title">
+                                        <h4>Timeline</h4>
+
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="timeline">
+                                            <li>
+                                                <div class="timeline-badge primary"><i class="fa fa-smile-o"></i></div>
+                                                <div class="timeline-panel">
+                                                    <div class="timeline-heading">
+                                                        <h5 class="timeline-title">School promote video sharing</h5>
+                                                    </div>
+                                                    <div class="timeline-body">
+                                                        <p>10 minutes ago</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="timeline-badge warning"><i class="fa fa-sun-o"></i></div>
+                                                <div class="timeline-panel">
+                                                    <div class="timeline-heading">
+                                                        <h5 class="timeline-title">Ready our school website and online service</h5>
+                                                    </div>
+                                                    <div class="timeline-body">
+                                                        <p>20 minutes ago</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="timeline-badge danger"><i class="fa fa-times-circle-o"></i></div>
+                                                <div class="timeline-panel">
+                                                    <div class="timeline-heading">
+                                                        <h5 class="timeline-title">Routine pubish our website form 10/03/2017 </h5>
+                                                    </div>
+                                                    <div class="timeline-body">
+                                                        <p>30 minutes ago</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="timeline-badge success"><i class="fa fa-check-circle-o"></i></div>
+                                                <div class="timeline-panel">
+                                                    <div class="timeline-heading">
+                                                        <h5 class="timeline-title">Principle quotation publish our website</h5>
+                                                    </div>
+                                                    <div class="timeline-body">
+                                                        <p>15 minutes ago</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="timeline-badge warning"><i class="fa fa-sun-o"></i></div>
+                                                <div class="timeline-panel">
+                                                    <div class="timeline-heading">
+                                                        <h5 class="timeline-title">Class schedule publish our website</h5>
+                                                    </div>
+                                                    <div class="timeline-body">
+                                                        <p>20 minutes ago</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!- /# card
+                            </div> -->
+                        </div>
+                        <!-- /# row -->
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-title pr">
+                                        <h4>Civilians </h4>
+
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table student-data-table m-t-20">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Number</th>
+                                                        <th>Aadhar</th>
+                                                        <th>Email</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for civ in Civilians %}
+                                                    <tr>
+                                                        <td>
+                                                            {{ civ.first_name }} {{ civ.last_name }}
+                                                        </td>
+                                                        <td>
+                                                            {{ civ.contact }}
+                                                        </td>
+                                                        
+                                                        <td>
+                                                            {{ civ.aadhar_number }}
+                                                        </td>
+                                                        <td>
+                                                            {{ civ.current_shelter.id }}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /# column -->
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-title pr">
+                                        <h4>Officals</h4>
+
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table student-data-table m-t-20">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Contact</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for off in Officials %}
+                                                    <tr>
+                                                        <td>
+                                                            {{ off.username }}
+                                                        </td>
+                                                        <td>
+                                                            {{ off.contact }}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-title pr">
+                                        <h4>Suppliers</h4>
+
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table student-data-table m-t-20">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Contact</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for off in Supplier %}
+                                                    <tr>
+                                                        <td>
+                                                            {{ off.username }}
+                                                        </td>
+                                                        <td>
+                                                            {{ off.contact }}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static "js/lib/circle-progress/circle-progress.min.js" %}"></script>
+    <script src="{% static "js/lib/circle-progress/circle-progress-init.js" %}"></script>
+
+    <!--  flot-chart js -->
+    <script src="{% static "js/lib/flot-chart/jquery.flot.js" %}"></script>
+    <script src="{% static "js/lib/flot-chart/jquery.flot.resize.js" %}"></script>
+    <script src="{% static "js/lib/flot-chart/flot-chart-init.js" %}"></script>
+    <!-- // flot-chart js -->
+
+    <script src="{% static "js/lib/weather/jquery.simpleWeather.min.js" %}"></script>
+    <script src="{% static "js/lib/weather/weather-init.js" %}"></script>
+    <script src="{% static "js/lib/owl-carousel/owl.carousel.min.js" %}"></script>
+    <script src="{% static "js/lib/owl-carousel/owl.carousel-init.js" %}"></script>
+    <script src="{% static "js/scripts.js" %}"></script>
+    <!-- scripit init-->
+{% endblock %}
