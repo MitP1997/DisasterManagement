@@ -64,6 +64,7 @@
       <script type="text/javascript">
         var shelterLoc = [];
         var contentInfo = [];
+        var shelterids = [];
       </script>
 
     {% for shelter in shelter_list %}
@@ -78,34 +79,32 @@
                             '<thead>'+
                                 '<tr>'+
                                     '<th>Parameter</th> '+
-                                    '<th>Value</th>'+
+                                    '<th>Status</th>'+
                                 '</tr>'+
                             '</thead>'+
                             '<tbody>'+
                                 '<tr>'+
-                                    '<th scope="row">Occupied by</th> '+
+                                    '<th scope="row">Occupied</th> '+
                                     '<td class="color-primary">{{ shelter.capacity_used }}</td>'+
                                 '</tr>'+
                                 '<tr>'+
-                                    '<th scope="row">Food Packets Reequired</th>'+
+                                    '<th scope="row">Food Packets</th>'+
                                     '<td class="color-success">{{ shelter.food_packets_needed }}</td>'+
                                 '</tr>'+
                                 '<tr>'+
-                                    '<th scope="row">First Aid Required</th>'+
+                                    '<th scope="row">First Aid</th>'+
                                     '<td class="color-danger">{{ shelter.first_aid_packets_needed }}</td>'+
                                 '</tr>'+
                             '</tbody>'+
                         '</table>'+
-                    '</div>'+
-                    '<div class="hidden">'+
-                        '{{ shelter.id }}'+
                     '</div>';
           contentInfo.push(table);
+          shelterids.push( {{ shelter.id|safe }} );
       </script>
     {% endfor %}
     <script>
       var map;
-      console.log(shelterLoc)
+      console.log(shelterids);
       function initMap()
         {
           var locations = shelterLoc;
@@ -425,27 +424,25 @@
               position: locations[i],
               map: map,
             });
-            attachContentMessage(marker,
-              contentInfo[i]);
+            attachContentMessage(marker,contentInfo[i],shelterids[i]);
           }
         }
         // Attaches an info window to a marker with the provided message. When the
         // marker is clicked, the info window will open with the secret message.
-      function attachContentMessage(marker, Message)
+      function attachContentMessage(marker, Message, id)
       {
-        var infowindow = new google.maps
-          .InfoWindow({
+        var infowindow = new google.maps.InfoWindow({
             content: Message
           });
           marker.addListener('mouseover',function (){
             infowindow.open(marker.get('map'), marker);
           });
-          // marker.addListener('mouseout',function() {
-          //   infowindow.close();
-          // }); 
-          marker.addListener('click',function() {
-            
-          }); 
+          marker.addListener('mouseout',function() {
+            infowindow.close();
+          });    
+          marker.addListener('click',function(){
+            location.href = '/admin_shelter/'+id+'/';
+          })
       }
 
     </script>
