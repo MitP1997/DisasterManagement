@@ -16,7 +16,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['139.59.63.61','localhost']
 
-AUTH_USER_MODEL = 'app.Civilians'
+AUTH_USER_MODEL = 'app.SystemUsers'
 
 # Application definition
 

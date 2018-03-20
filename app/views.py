@@ -153,3 +153,16 @@ class Globals():
 #             else:
 #                 response = redirect('register-civilian')
 #             return response
+
+
+def DemandSupply():
+    # fetch available with self
+    # fetch required List
+    # 
+    # if sum of required is greater than self:
+    #       weighted distribution
+    #       forward the request to another supplier
+    # else:
+    #       assign the required
+    # update the requirements for every shelters
+    # TSP
