@@ -1,19 +1,29 @@
 from django import forms
 
-class OfficialRegistrationForm(forms.Form):
-    """
-    Complete form for official registration
-    """
-    def __init__(self,*args,**kwargs):
-        self.system_user=kwargs.pop('system_user',None)
-        super(OfficialRegistrationForm,self).__init__(*args,**kwargs)
-        self.fields['aadhar_number']=forms.IntegerField(
-            widget=forms.NumberInput(attrs={
-                'title':'Aadhar Number of the official'
-            }),
-            required=True,
-        )
 
+SHELTER_TYPE_CHOICES =(
+    ('g','government'),
+    ('a','ad-hoc'),
+)
+
+GENDER_CHOICES = (
+    ('m', 'Male'),
+    ('f', 'Female'),
+    ('o', 'Other'),
+)
+
+ROLE_CHOICES = (
+    ('a', 'Admin'),
+    ('o', 'Operator'),
+    ('s', 'Supplier'),
+)
+
+SUPPLY_TYPE_CHOICES = (
+    ('fp','food_packet'),
+    ('fa','first_aid'),
+    ('b','beddings'),
+    ('w','water'),
+)
 
 class CivilianRegistrationForm(forms.Form):
     """
@@ -22,16 +32,15 @@ class CivilianRegistrationForm(forms.Form):
     def __init__(self,*args,**kwargs):
         self.system_user=kwargs.pop('system_user',None)
         super(CivilianRegistrationForm,self).__init__(*args,**kwargs)
+        self.fields['family_id']=forms.IntegerField(
+            widget=forms.NumberInput(attrs={
+                'title':'Family ID'
+            }),
+            required=False,
+        )
         self.fields['aadhar_number']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
-                'title':'Aadhar Number of the official'
-            }),
-            required=True,
-        )
-        self.fields['email']=forms.EmailField(
-            max_length=100,
-            widget=forms.EmailInput(attrs={
-                'title':'Email Id of the Civilian'
+                'title':'Aadhar Number'
             }),
             required=True,
         )
@@ -54,57 +63,49 @@ class CivilianRegistrationForm(forms.Form):
                 'title':'Last Name'
             }),
         )
-        self.fields['password']=forms.CharField(
-            max_length=30,
-            widget=forms.PasswordInput(attrs={
-                'title':'Password'
+        self.fields['contact']=forms.CharField(
+            max_length=100,
+            widget=forms.TextInput(attrs={
+                'title':'Contact '
             }),
+            required=True,
         )
         self.fields['dob']=forms.DateField(
             widget=forms.DateInput(attrs={
-                'title':'DOB of the civilian'
+                'title':'Date of Birth'
             }),
             required=True,
         )
         self.fields['gender']=forms.CharField(
-            max_length=1,
-            widget=forms.TextInput(attrs={
-                'title':'Gender of the Civilian'
+            max_length=10,
+            widget=forms.Select(choices = GENDER_CHOICES, attrs={
+                'title':'Gender'
             }),
-            required=True,
         )
-        self.fields['guardians_name']=forms.CharField(
-            max_length=100,
+        self.fields['blood_group']=forms.CharField(
             widget=forms.TextInput(attrs={
-                'title':'Guardian of the Civilian'
-            }),
-            required=True,
-        )
-        self.fields['contact']=forms.CharField(
-            max_length=100,
-            widget=forms.TextInput(attrs={
-                'title':'Contact of the Civilian'
+                'title':'Blood Group'
             }),
             required=True,
         )
         self.fields['address_line_1']=forms.CharField(
             max_length=100,
             widget=forms.TextInput(attrs={
-                'title':'Address Line 1 of the official'
+                'title':'Address Line 1'
             }),
             required=True,
         )
         self.fields['address_line_2']=forms.CharField(
             max_length=100,
             widget=forms.TextInput(attrs={
-                'title':'Address Line 2 of the official'
+                'title':'Address Line 2'
             }),
             required=False,
         )
         self.fields['address_line_3']=forms.CharField(
             max_length=100,
             widget=forms.TextInput(attrs={
-                'title':'Address Line 3 of the official'
+                'title':'Address Line 3 '
             }),
             required=False,
         )
@@ -131,58 +132,7 @@ class CivilianRegistrationForm(forms.Form):
         )
         self.fields['pincode']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
-                'title':'pincode'
+                'title':'Pincode'
             }),
             required=True,
-        )
-        self.fields['blood_group']=forms.CharField(
-            widget=forms.TextInput(attrs={
-                'title':'Blood Group'
-            }),
-            required=True,
-        )
-        self.fields['parent_gaurdian']=forms.IntegerField(
-            widget=forms.NumberInput(attrs={
-                'title':'parent gaurdian'
-            }),
-            required=True,
-        )
-
-class FamilyRegistrationForm(forms.Form):
-    """
-    Complete form for family registration
-    """
-
-    def __init__(self,*args,**kwargs):
-        super(FamilyRegistrationForm,self).__init__(*args,**kwargs)
-        self.fields['head_name']=forms.CharField(
-            max_length=100,
-            widget=forms.TextInput(attrs={
-                'title':'Head of the family'
-            }),
-            required=True,
-        )
-        self.fields['number_of_members']=forms.IntegerField(
-            widget=forms.NumberInput(attrs={
-                'title':'Number of family members'
-            }),
-            required=True,
-        )
-        self.fields['family_address_line_1']=forms.CharField(
-            widget=forms.TextInput(attrs={
-                'title':'Address Line 1 of the family'
-            }),
-            required=True,
-        )
-        self.fields['family_address_line_2']=forms.CharField(
-            widget=forms.TextInput(attrs={
-                'title':'Address Line 2 of the family'
-            }),
-            required=False,
-        )
-        self.fields['family_address_line_3']=forms.CharField(
-            widget=forms.TextInput(attrs={
-                'title':'Address Line 3 of the family'
-            }),
-            required=False,
         )

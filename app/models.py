@@ -45,12 +45,12 @@ class Shelter(models.Model):
         self.save()
 
     def updateOccupiedCapacity(self,capacity):
-        capacity = self.capacity_occupied + capacity
-        self.update(capacity_occupied=capacity)
+        self.capacity_occupied = self.capacity_occupied + capacity
+        self.save()
 
     def updateTotalCapacity(self,capacity):
-        capacity = self.total_capacity_of_people + capacity
-        self.update(total_capacity_of_people=capacity)
+        self.total_capacity_of_people = self.total_capacity_of_people + capacity
+        self.save()
 
 class Stocks(models.Model):
     shelter = models.ForeignKey(Shelter)
@@ -72,28 +72,36 @@ class Stocks(models.Model):
         self.save()
 
     def updateFoodPacketsNeeded(self,quantity):
-        self.update(food_packets_needed=(self.food_packets_needed+quantity))
+        self.food_packets_needed=self.food_packets_needed+quantity
+        self.save()
 
     def updateFirstAidPacketsNeeded(self,quantity):
-        self.update(first_aid_packets_needed=(self.first_aid_packets_needed+quantity))
+        self.first_aid_packets_needed=self.first_aid_packets_needed+quantity
+        self.save()
 
     def updateBeddingPacketsNeeded(self,quantity):
-        self.update(bedding_packets_needed=(self.bedding_packets_needed+quantity))
+        self.bedding_packets_needed=self.bedding_packets_needed+quantity
+        self.save()
 
     def updateWaterNeeded(self,quantity):
-        self.update(water_needed=(self.water_needed+quantity))
+        self.water_needed=self.water_needed+quantity
+        self.save()
 
     def updateFoodPacketsAvailable(self,quantity):
-        self.update(food_packets_available=(self.food_packets_available+quantity))
+        self.food_packets_available=self.food_packets_available+quantity
+        self.save()
 
     def updateFirstAidPacketsAvailable(self,quantity):
-        self.update(first_aid_packets_available=(self.first_aid_packets_available+quantity))
+        self.first_aid_packets_available=self.first_aid_packets_available+quantity
+        self.save()
 
     def updateBeddingPacketsAvailable(self,quantity):
-        self.update(bedding_packets_available=(self.bedding_packets_available+quantity))
+        self.bedding_packets_available=self.bedding_packets_available+quantity
+        self.save()
 
     def updateWaterAvailable(self,quantity):
-        self.update(water_available=(self.water_available+quantity))
+        self.water_available=self.water_available+quantity
+        self.save()
 
 class Families(models.Model):
     last_name = models.CharField(max_length=30)
@@ -104,7 +112,8 @@ class Families(models.Model):
         self.save()
 
     def updateCount(self):
-        self.update(number_of_members=(self.number_of_members+1))
+        self.number_of_members = self.number_of_members+1
+        self.save()
 
 class Civilians(models.Model):
     family = models.ForeignKey(Families)
@@ -130,7 +139,7 @@ class Civilians(models.Model):
         try:
             self.family = Families.objects.get(id=civilian_registration_form.cleaned_data.get('family_id'))
             self.family.updateCount()
-        except ObjectDoesNotexist:
+        except ObjectDoesNotExist:
             family = Families()
             family.create(civilian_registration_form.cleaned_data.get('last_name'))
             self.family = family
