@@ -155,7 +155,7 @@ class Civilians(models.Model):
         self.save()
 
 class SystemUsers(AbstractUser):
-    civilian = models.ForeignKey(Civilians)
+    civilian = models.ForeignKey(Civilians, blank = True, null = True)
     shelter = models.ForeignKey(Shelter,blank=True,null=True)
     user_role = models.CharField(max_length=10, choices = ROLE_CHOICES, blank = True , null = True)
 

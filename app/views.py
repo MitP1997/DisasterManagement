@@ -155,10 +155,10 @@ class Globals():
 #             return response
 
 
-def DemandSupply():
+# def DemandSupply():
     # fetch available with self
     # fetch required List
-    # 
+    #
     # if sum of required is greater than self:
     #       weighted distribution
     #       forward the request to another supplier
