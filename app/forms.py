@@ -12,7 +12,6 @@ class OfficialRegistrationForm(forms.Form):
                 'title':'Aadhar Number of the official'
             }),
             required=True,
-            #help_text="Aadhar Number"
         )
 
 
@@ -28,7 +27,6 @@ class CivilianRegistrationForm(forms.Form):
                 'title':'Aadhar Number of the official'
             }),
             required=True,
-            #help_text="Aadhar Number"
         )
         self.fields['email']=forms.EmailField(
             max_length=100,
@@ -42,7 +40,6 @@ class CivilianRegistrationForm(forms.Form):
             widget=forms.TextInput(attrs={
                 'title':'First Name'
             }),
-            #help_text="Gender"
         )
         self.fields['middle_name']=forms.CharField(
             max_length=30,
@@ -50,21 +47,18 @@ class CivilianRegistrationForm(forms.Form):
                 'title':'Middle Name'
             }),
             required=False,
-            #help_text="Gender"
         )
         self.fields['last_name']=forms.CharField(
             max_length=30,
             widget=forms.TextInput(attrs={
                 'title':'Last Name'
             }),
-            #help_text="Gender"
         )
         self.fields['password']=forms.CharField(
             max_length=30,
             widget=forms.PasswordInput(attrs={
                 'title':'Password'
             }),
-            #help_text="Gender"
         )
         self.fields['dob']=forms.DateField(
             widget=forms.DateInput(attrs={
@@ -99,7 +93,6 @@ class CivilianRegistrationForm(forms.Form):
                 'title':'Address Line 1 of the official'
             }),
             required=True,
-            #help_text="Address Line 1"
         )
         self.fields['address_line_2']=forms.CharField(
             max_length=100,
@@ -107,7 +100,6 @@ class CivilianRegistrationForm(forms.Form):
                 'title':'Address Line 2 of the official'
             }),
             required=False,
-            #help_text="Address Line 2"
         )
         self.fields['address_line_3']=forms.CharField(
             max_length=100,
@@ -115,7 +107,6 @@ class CivilianRegistrationForm(forms.Form):
                 'title':'Address Line 3 of the official'
             }),
             required=False,
-            #help_text="Address Line 3"
         )
         self.fields['city']=forms.CharField(
             max_length=100,
@@ -123,7 +114,6 @@ class CivilianRegistrationForm(forms.Form):
                 'title':'City'
             }),
             required=True,
-            #help_text="Address Line 1"
         )
         self.fields['state']=forms.CharField(
             max_length=100,
@@ -131,7 +121,6 @@ class CivilianRegistrationForm(forms.Form):
                 'title':'State'
             }),
             required=True,
-            #help_text="Address Line 2"
         )
         self.fields['country']=forms.CharField(
             max_length=100,
@@ -139,28 +128,24 @@ class CivilianRegistrationForm(forms.Form):
                 'title':'Country'
             }),
             required=True,
-            #help_text="Address Line 3"
         )
         self.fields['pincode']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
                 'title':'pincode'
             }),
             required=True,
-            #help_text="Address Line 3"
         )
         self.fields['blood_group']=forms.CharField(
             widget=forms.TextInput(attrs={
                 'title':'Blood Group'
             }),
             required=True,
-            #help_text="Address Line 3"
         )
         self.fields['parent_gaurdian']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
                 'title':'parent gaurdian'
             }),
             required=True,
-            #help_text="Address Line 3"
         )
 
 class FamilyRegistrationForm(forms.Form):

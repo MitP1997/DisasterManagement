@@ -92,6 +92,18 @@ class Stocks(models.Model):
     def updateWaterNeeded(self,quantity):
         self.update(water_needed=(self.water_needed+quantity))
 
+    def updateFoodPacketsAvailable(self,quantity):
+        self.update(food_packets_available=(self.food_packets_available+quantity))
+
+    def updateFirstAidPacketsAvailable(self,quantity):
+        self.update(first_aid_packets_available=(self.first_aid_packets_available+quantity))
+
+    def updateBeddingPacketsAvailable(self,quantity):
+        self.update(bedding_packets_available=(self.bedding_packets_available+quantity))
+
+    def updateWaterAvailable(self,quantity):
+        self.update(water_available=(self.water_available+quantity))
+
 class Families(models.Model):
     last_name = models.CharField(max_length=30)
     number_of_members = models.IntegerField(default = 1)
@@ -101,7 +113,7 @@ class Families(models.Model):
         self.save()
 
     def updateCount(self):
-        self.update(count=(self.count+1))
+        self.update(number_of_members=(self.number_of_members+1))
 
 class Civilians(models.Model):
     family = models.ForeignKey(Families)
@@ -167,3 +179,9 @@ class SupplierLogs(models.Model):
     supplier = models.ForeignKey(SystemUsers)
     quantity_supplied = models.IntegerField()
     supply_type = models.CharField(max_length=10, choices = SUPPLY_TYPE_CHOICES)
+
+    def create(self,log_dict):
+        self.supplier = SystemUsers.objects.get(id=log_dict['supplier_id'])
+        self.quantity_supplied = log_dict['quantity_supplied']
+        self.supply_type = log_dict['supply_type']
+        self.save()
