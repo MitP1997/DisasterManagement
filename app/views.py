@@ -83,6 +83,36 @@ class CivilianRegistrationFormView(FormView):
         # Additional system user registration functionaity here (Maybe an Email??)
         return super(CivilianRegistrationFormView, self).form_valid(form)
 
+class SystemUserRegistrationFormView(FormView):
+    template_name = "system_user_register.html"
+    form_class = SystemUserRegistrationForm
+    success_url = "/system-user-registered-successfully/"
+
+    def get_form_kwargs(self):
+        logger.info('called get form kwargs')
+        kwargs=super(SystemUserRegistrationFormView,self).get_form_kwargs()
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        logger.info('called get context')
+        context=super(SystemUserRegistrationFormView,self).get_context_data()
+        form=self.get_form(self.form_class)
+        context['form']=form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        system_user_registration_form= SystemUserRegistrationForm(request.POST)
+        if system_user_registration_form.is_valid():
+            system_user = SystemUsers()
+            length = len(request.get_full_path().split("/"))
+            print request.get_full_path().split("/")[length-2]
+            system_user.create(system_user_registration_form,request.get_full_path().split("/")[length-2])
+            return self.form_valid(system_user_registration_form, system_user)
+
+    def form_valid(self, form, form_object):
+        # Additional system user registration functionaity here (Maybe an Email??)
+        return super(SystemUserRegistrationFormView, self).form_valid(form)
+
 class Globals():
     response = {}
     response['status'] = 0

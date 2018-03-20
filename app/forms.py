@@ -136,3 +136,39 @@ class CivilianRegistrationForm(forms.Form):
             }),
             required=True,
         )
+
+class SystemUserRegistrationForm(forms.Form):
+    """
+    Complete form for official registration
+    """
+    def __init__(self,*args,**kwargs):
+        self.system_user=kwargs.pop('system_user',None)
+        super(SystemUserRegistrationForm,self).__init__(*args,**kwargs)
+        self.fields['aadhar_number']=forms.IntegerField(
+            widget=forms.NumberInput(attrs={
+                'title':'Aadhar Number'
+            }),
+            required=True,
+        )
+        self.fields['password']=forms.CharField(
+            widget=forms.PasswordInput(attrs={
+                'title':'Password'
+            }),
+            required=True,
+        )
+        self.fields['confirm_password']=forms.CharField(
+            widget=forms.PasswordInput(attrs={
+                'title':'Confirm Password'
+            }),
+            required=True,
+        )
+
+    def clean(self):
+        cleaned_data = super(SystemUserRegistrationForm, self).clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password != confirm_password:
+            raise forms.ValidationError(
+                "password and confirm_password does not match"
+            )

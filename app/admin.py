@@ -6,3 +6,6 @@ from .models import *
 admin.site.register(SystemUsers)
 admin.site.register(Families)
 admin.site.register(Civilians)
+admin.site.register(Shelter)
+admin.site.register(Stocks)
+admin.site.register(SupplierLogs)

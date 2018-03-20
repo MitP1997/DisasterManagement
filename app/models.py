@@ -169,9 +169,9 @@ class SystemUsers(AbstractUser):
     user_role = models.CharField(max_length=10, choices = ROLE_CHOICES, blank = True , null = True)
 
     def create(self,registration_form,role):
-        self.civilian=Civilians.objects.get(aadhar_number=registration_form.get('aadhar_number'))
+        self.civilian=Civilians.objects.get(aadhar_number=registration_form.cleaned_data.get('aadhar_number'))
         self.user_role = role
-        self.username = registration_form.cleaned_data.get('email')
+        self.username = registration_form.cleaned_data.get('aadhar_number')
         self.set_password(registration_form.cleaned_data.get('password'))
         self.save()
 
