@@ -4,15 +4,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 
-# Create your models here.
-
-# Table Shelter: id, total capacity of people, capacity used, Food packets needed, first aid packets needed
-
-# Table Civilians: all biodata, family ID etc
-# Table Users : all bio data, access level
-# Table Supplier logs: id, name, quantity supplied, type(food, first aid etc)
-# Table Current stock: current food packets, current first aid packets
-
 
 SHELTER_TYPE_CHOICES =(
     ('g','government'),
