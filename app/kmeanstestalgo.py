@@ -6,14 +6,12 @@ import matplotlib.animation as animation
 def load_dataset(name):
     return np.loadtxt(name)
 
-
 def euclidian(a, b):
     return np.linalg.norm(a-b)
 
-
 def plot(dataset, history_centroids, belongs_to):
     #TODO Add more colors
-    colors = ['r', 'g']
+    colors = ['b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w']
 
     fig, ax = plt.subplots()
 
@@ -29,7 +27,7 @@ def plot(dataset, history_centroids, belongs_to):
                 history_points.append(ax.plot(item[0], item[1], 'bo')[0])
             else:
                 history_points[inner].set_data(item[0], item[1])
-                print("centroids {} {}".format(index, item))
+                #print("centroids {} {}".format(index, item))
 
                 plt.pause(0.8)
 
