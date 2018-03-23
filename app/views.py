@@ -3,6 +3,7 @@ import logging
 
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
+from django.utils import timezone
 from .models import *
 from forms import *
 from django.views.generic.edit import FormView
@@ -141,6 +142,19 @@ class LoginFormView(FormView):
         # Additional system user registration functionaity here (Maybe an Email??)
         return super(LoginForm, self).form_valid(form)
 
+class CivilianUpdateShelterDetailView(DetailView):
+    model = Civilians
+    template_name = 'civilian_update_shelter.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['time'] = timezone.now()
+        return context
+
+    def get(self, request, *args, **kwargs):
+        Civilian.updateAssignedShelter(Shelter.objects.get(id=self.kwargs['shelter_id']))
+        return redirect('shelter-updated-successfully') ##TODO update final redirect
+
 class RegisterAtShelterFormView(FormView):
     template_name = "register_at_shelter.html"
     form_class = CivilianAtShelterForm
@@ -188,6 +202,7 @@ class AllocationAtShelterFormView(FormView):
         context=super(AllocationAtShelterFormView,self).get_context_data()
         form=self.get_form(self.form_class)
         context['form']=form
+        context['time']=timezone.now()
         return context
 
     def post(self, request, *args, **kwargs):
