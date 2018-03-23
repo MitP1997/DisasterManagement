@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
-
+from django_extensions.db.models import TimeStampedModel
 
 SHELTER_TYPE_CHOICES =(
     ('g','government'),
@@ -163,6 +163,10 @@ class Civilians(models.Model):
         self.blood_group = civilian_registration_form.cleaned_data.get('blood_group')
         self.save()
 
+    def updateCurrentShelter(self,shelter):
+        self.current_shelter = shelter
+        self.save()
+
 class SystemUsers(AbstractUser):
     civilian = models.ForeignKey(Civilians, blank = True, null = True)
     shelter = models.ForeignKey(Shelter,blank=True,null=True)
@@ -184,4 +188,27 @@ class SupplierLogs(models.Model):
         self.supplier = SystemUsers.objects.get(id=log_dict['supplier_id'])
         self.quantity_supplied = log_dict['quantity_supplied']
         self.supply_type = log_dict['supply_type']
+        self.save()
+
+class AllocationToFamilies(TimeStampedModel):
+    family = models.ForeignKey(Families)
+    given_food_packets_count = models.IntegerField(default=0)
+    given_bedding_packets_count = models.IntegerField(default=0)
+    given_firstaid_packets_count = models.IntegerField(default=0)
+    given_water_packets_count = models.IntegerField(default=0)
+
+    def updateOrCreateFood(self,created,count):
+        self.given_food_packets_count = self.given_food_packets_count + count
+        self.save()
+
+    def updateOrCreateBedding(self,created,count):
+        self.given_bedding_packets_count = self.given_bedding_packets_count + count
+        self.save()
+
+    def updateOrCreateFirstAid(self,created,count):
+        self.given_firstaid_packets_count = self.given_firstaid_packets_count + count
+        self.save()
+
+    def updateOrCreateWater(self,created,count):
+        self.given_water_packets_count = self.given_water_packets_count + count
         self.save()

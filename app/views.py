@@ -12,6 +12,8 @@ from django.forms.formsets import formset_factory
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
+from django.contrib.auth import login
+
 logging.basicConfig(level=logging.INFO)
 logger=logging.getLogger(__name__)
 
@@ -112,6 +114,110 @@ class SystemUserRegistrationFormView(FormView):
     def form_valid(self, form, form_object):
         # Additional system user registration functionaity here (Maybe an Email??)
         return super(SystemUserRegistrationFormView, self).form_valid(form)
+
+class LoginFormView(FormView):
+    template_name = "login.html"
+    form_class = LoginForm
+    success_url = "/logged-in-successfully/"
+
+    def get_form_kwargs(self):
+        logger.info('called get form kwargs')
+        kwargs=super(LoginFormView,self).get_form_kwargs()
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        logger.info('called get context')
+        context=super(LoginFormView,self).get_context_data()
+        form=self.get_form(self.form_class)
+        context['form']=form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        login_form = LoginForm(request.POST)
+        if login_form.is_valid():
+            login(request,user)
+
+    def form_valid(self, form, form_object):
+        # Additional system user registration functionaity here (Maybe an Email??)
+        return super(LoginForm, self).form_valid(form)
+
+class RegisterAtShelterFormView(FormView):
+    template_name = "register_at_shelter.html"
+    form_class = CivilianAtShelterForm
+    success_url = "/registered-at-shelter-successfully/"
+
+    def get_form_kwargs(self):
+        logger.info('called get form kwargs')
+        kwargs=super(RegisterAtShelterFormView,self).get_form_kwargs()
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        logger.info('called get context')
+        context=super(RegisterAtShelterFormView,self).get_context_data()
+        form=self.get_form(self.form_class)
+        context['form']=form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        register_at_shelter_form= CivilianAtShelterForm(request.POST)
+        if register_at_shelter_form.is_valid():
+            try:
+                civilian = Civilians.objects.get(aadhar_number=register_at_shelter_form.cleaned_data.get('aadhar_number'))
+            except ObjectDoesNotExist:
+                civilian = Civilians.objects.get(contact=register_at_shelter_form.cleaned_data.get('mobile_number'))
+            civilian.updateCurrentShelter(request.user.shelter)
+            return self.form_valid(register_at_shelter_form, system_user)
+
+    def form_valid(self, form, form_object):
+        # Additional system user registration functionaity here (Maybe an Email??)
+        return super(RegisterAtShelterFormView, self).form_valid(form)
+
+## TODO show the list of members and the count of that particular family before submission
+class AllocationAtShelterFormView(FormView):
+    template_name = "allocate_at_shelter.html"
+    form_class = CivilianAllocationForm
+    success_url = "/allocated-at-shelter-successfully/"
+
+    def get_form_kwargs(self):
+        logger.info('called get form kwargs')
+        kwargs=super(AllocationAtShelterFormView,self).get_form_kwargs()
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        logger.info('called get context')
+        context=super(AllocationAtShelterFormView,self).get_context_data()
+        form=self.get_form(self.form_class)
+        context['form']=form
+        return context
+
+    def post(self, request, *args, **kwargs):
+        allocate_at_shelter_form= CivilianAllocationForm(request.POST)
+        if allocate_at_shelter_form.is_valid():
+            try:
+                civilian = Civilians.objects.get(aadhar_number=allocate_at_shelter_form.cleaned_data.get('aadhar_number'))
+            except ObjectDoesNotExist:
+                civilian = Civilians.objects.get(contact=allocate_at_shelter_form.cleaned_data.get('mobile_number'))
+            # get or create on AllocationToFamilies for civilian.family
+            allocation_to_family, created = AllocationToFamilies.objects.get_or_create(family=civilian.family)
+
+            length = len(request.get_full_path().split("/"))
+            allocation_to_be_done = request.get_full_path().split("/")[length-2]
+
+            count = allocate_at_shelter_form.cleaned_data.get('count')
+
+            if allocation_to_be_done == 'food':
+                allocation_to_family.updateOrCreateFood(created,count)
+            elif allocation_to_be_done == 'bedding':
+                allocation_to_family.updateOrCreateBedding(created,count)
+            elif allocation_to_be_done == 'firstaid':
+                allocation_to_family.updateOrCreateFirstAid(created,count)
+            elif allocation_to_be_done == 'water':
+                allocation_to_family.updateOrCreateWater(created,count)
+            return self.form_valid(allocate_at_shelter_form, system_user)
+
+    def form_valid(self, form, form_object):
+        # Additional system user registration functionaity here (Maybe an Email??)
+        return super(AllocationAtShelterFormView, self).form_valid(form)
 
 class Globals():
     response = {}

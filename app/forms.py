@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth import login
 
 
 SHELTER_TYPE_CHOICES =(
@@ -172,3 +173,92 @@ class SystemUserRegistrationForm(forms.Form):
             raise forms.ValidationError(
                 "password and confirm_password does not match"
             )
+
+class CivilianAtShelterForm(forms.Form):
+    """
+    Complete form for civilian at shelter
+    """
+    def __init__(self,*args,**kwargs):
+        self.system_user=kwargs.pop('system_user',None)
+        super(CivilianAtShelterForm,self).__init__(*args,**kwargs)
+        self.fields['aadhar_number']=forms.IntegerField(
+            widget=forms.NumberInput(attrs={
+                'title':'Aadhar Number'
+            }),
+            required=False,
+        )
+        self.fields['mobile_number']=forms.IntegerField(
+            widget=forms.NumberInput(attrs={
+                'title':'Mobile Number'
+            }),
+            required=False,
+        )
+
+    def clean(self):
+        cleaned_data = super(CivilianAtShelterForm, self).clean()
+        try:
+            aadhar_number = cleaned_data.get("aadhar_number")
+            mobile_number = cleaned_data.get("mobile_number")
+        except ObjectDoesNotExist:
+            pass
+        if !aadhar_number and !mobile_number: # both were not entered
+            raise forms.ValidationError("Enter either of the data")
+
+        return cleaned_data
+
+class CivilianAllocationForm(forms.Form):
+    """
+    Complete form for civilian at shelter
+    """
+    def __init__(self,*args,**kwargs):
+        self.system_user=kwargs.pop('system_user',None)
+        super(CivilianAtShelterForm,self).__init__(*args,**kwargs)
+        self.fields['aadhar_number']=forms.IntegerField(
+            widget=forms.NumberInput(attrs={
+                'title':'Aadhar Number'
+            }),
+            required=False,
+        )
+        self.fields['mobile_number']=forms.IntegerField(
+            widget=forms.NumberInput(attrs={
+                'title':'Mobile Number'
+            }),
+            required=False,
+        )
+        self.fields['count'] = forms.IntegerField(
+            widget=forms.NumberInput(attrs={
+                'title':'Total packets given'
+            }),
+            required=True,
+        )
+
+
+class LoginForm(forms.Form):
+    """
+    Complete form for login of system users
+    """
+    def __init__(self,*args,**kwargs):
+        self.system_user=kwargs.pop('system_user',None)
+        super(LoginForm,self).__init__(*args,**kwargs)
+        self.fields['aadhar_number']=forms.IntegerField(
+            widget=forms.NumberInput(attrs={
+                'title':'Aadhar Number'
+            }),
+            required=True,
+        )
+        self.fields['password']=forms.CharField(
+            widget=forms.PasswordInput(attrs={
+                'title':'Password'
+            }),
+            required=True,
+        )
+
+    def clean(self):
+        cleaned_data = super(LoginForm, self).clean()
+        username = cleaned_data.get("aadhar_number")
+        password = cleaned_data.get("password")
+        user = auth.authenticate(username=cleaned_data.get('aadhar_number'), password=cleaned_data.get('password'))
+        if !user:
+            raise forms.ValidationError("Invalid Login")
+
+        return cleaned_data
