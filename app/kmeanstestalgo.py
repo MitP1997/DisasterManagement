@@ -41,6 +41,7 @@ def kmeans(k, epsilon=0, distance='euclidian'):
     dataset = load_dataset('civilian-dataset.txt')
     # dataset = dataset[:, 0:dataset.shape[1] - 1]
     num_instances, num_features = dataset.shape
+    #instances is the number of people and features are 2 i.e. => lat and long
     prototypes = dataset[np.random.randint(0, num_instances - 1, size=k)]
     history_centroids.append(prototypes)
     prototypes_old = np.zeros(prototypes.shape)
