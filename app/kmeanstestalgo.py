@@ -11,7 +11,7 @@ def euclidian(a, b):
 
 def plot(dataset, history_centroids, belongs_to):
     #TODO Add more colors
-    colors = ['b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w','b','g','r','c','m','y','k','w']
+    colors = ['g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w','g','r','c','m','y','k','w']
 
     fig, ax = plt.subplots()
 
@@ -28,7 +28,8 @@ def plot(dataset, history_centroids, belongs_to):
             else:
                 history_points[inner].set_data(item[0], item[1])
                 #print("centroids {} {}".format(index, item))
-
+                print "centroid: "+str(index)+" = "+str(item)
+                import pdb; pdb.set_trace()
                 plt.pause(0.8)
 
 
@@ -80,7 +81,7 @@ def elbow():
 
 def execute():
     # k = elbow()
-    k= 2
+    k = 5
     dataset = load_dataset('civilian-dataset.txt')
     centroids, history_centroids, belongs_to = kmeans(k)
     plot(dataset, history_centroids, belongs_to)
