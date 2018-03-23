@@ -163,6 +163,10 @@ class Civilians(models.Model):
         self.blood_group = civilian_registration_form.cleaned_data.get('blood_group')
         self.save()
 
+    def updateAssignedShelter(self,shelter_id):
+        self.assigned_shelter = Shelter.objects.get(id=shelter_id)
+        self.save()
+        
     def updateCurrentShelter(self,shelter):
         self.current_shelter = shelter
         self.save()
