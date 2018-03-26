@@ -137,6 +137,18 @@ class CivilianRegistrationForm(forms.Form):
             }),
             required=True,
         )
+        self.fields['latitude']=forms.DecimalField(
+            widget=forms.NumberInput(attrs={
+                'title':'Latitude'
+            }),
+            required=True,
+        )
+        self.fields['longitude']=forms.DecimalField(
+            widget=forms.NumberInput(attrs={
+                'title':'Longitude'
+            }),
+            required=True,
+        )
 
 class SystemUserRegistrationForm(forms.Form):
     """
@@ -198,10 +210,13 @@ class CivilianAtShelterForm(forms.Form):
         cleaned_data = super(CivilianAtShelterForm, self).clean()
         try:
             aadhar_number = cleaned_data.get("aadhar_number")
+        except ObjectDoesNotExist:
+            pass
+        try:
             mobile_number = cleaned_data.get("mobile_number")
         except ObjectDoesNotExist:
             pass
-        if !aadhar_number and !mobile_number: # both were not entered
+        if (aadhar_number is None) and (mobile_number is None): # both were not entered
             raise forms.ValidationError("Enter either of the data")
 
         return cleaned_data
@@ -258,7 +273,7 @@ class LoginForm(forms.Form):
         username = cleaned_data.get("aadhar_number")
         password = cleaned_data.get("password")
         user = auth.authenticate(username=cleaned_data.get('aadhar_number'), password=cleaned_data.get('password'))
-        if !user:
+        if user is None:
             raise forms.ValidationError("Invalid Login")
 
         return cleaned_data

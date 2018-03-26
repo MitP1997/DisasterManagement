@@ -7,6 +7,7 @@ from django.utils import timezone
 from .models import *
 from forms import *
 from django.views.generic.edit import FormView
+from django.views import View
 
 
 from django.forms.formsets import formset_factory
@@ -152,7 +153,10 @@ class CivilianUpdateShelterDetailView(DetailView):
         return context
 
     def get(self, request, *args, **kwargs):
-        Civilian.updateAssignedShelter(Shelter.objects.get(id=self.kwargs['shelter_id']))
+        civilian_aadhar_number = request.GET.get('aadhar_number')
+        shelter_id = request.user.shelter.id
+        civilian = Civilian.objects.get(aadhar_number=civilian_aadhar_number)
+        civilian.updateAssignedShelter(Shelter.objects.get(id=shelter_id))
         return redirect('shelter-updated-successfully') ##TODO update final redirect
 
 class RegisterAtShelterFormView(FormView):
@@ -239,6 +243,32 @@ class Globals():
     response['status'] = 0
     response['data'] = {}
     data = {}
+    start_latitude = 6
+    end_latitude = 12
+    start_longitude = 92
+    end_longitude = 94
+    degree_to_km = 120
+    a_minute_to_km = 2
+    block_side = 2
+
+    def manhattan_distance(sx, sy, ex, ey):
+        return abs(ex - sx) + abs(ey - sy)
+
+    def frange(self, start, end=None, inc=None):
+        if end == None:
+            end = start + 0.0
+            start = 0.0
+        if inc == None:
+            inc = 1.0
+        L = []
+        while 1:
+            next = start + len(L) * inc
+            if inc > 0 and next >= end:
+                break
+            elif inc < 0 and next <= end:
+                break
+            L.append(next)
+        return L
 
     def success(self,arr):
         response = self.response
@@ -246,6 +276,60 @@ class Globals():
         response['data'] = arr
         return HttpResponse(json.dumps(response), status=200, content_type="application/json")
 
+class PreDRAPComputation(View):
+
+    def get(self,request,*args,**kwargs):
+        start_latitude = Globals.start_latitude
+        end_latitude = Globals.end_latitude
+        start_longitude = Globals.start_longitude
+        end_longitude = Globals.end_longitude
+        increment = Globals.block_side*1.000000/Globals.degree_to_km
+
+        duplicate_lat = start_latitude
+        duplicate_long = start_longitude
+
+        start_time = timezone.now()
+        y = 0
+        for i in Globals().frange(duplicate_lat, end_latitude + increment, increment):
+            x = 0
+            for j in Globals().frange(duplicate_long, end_longitude + increment, increment):
+                block = BlocksData()
+                block.create(i,j,i+increment,j+increment,x,y)
+                x = x + 1
+            y = y + 1
+        end_time = timezone.now()
+        return HttpResponse("Start "+start_time+"\nEnd "+end_time)
+
+class BlockDictComputation(View):
+
+    def get_nearest_shelter(self, x, y):
+        shelters = Shelter.objects.all()
+        nearest_shelter = None
+        min_dist = BlocksData.objects.all().count()
+        for i in range(len(shelters.iteritems())):
+            new_dist = Globals().manhattan_distance(x, y, shelters[i].block.x, shelters[i].block.y)
+            if new_dist <= min_dist:
+                min_dist = new_dist
+                nearest_shelter = shelters[i]
+
+        return nearest_shelter
+
+    def get(self,request,*args,**kwargs):
+        starting_block = BlocksData.objects.get(start_latitude = Globals.start_latitude, start_longitude = Globals.start_longitude)
+        start_y = starting_block.y
+        start_x = starting_block.x
+        ending_block = BlocksData.objects.get(end_latitude = Globals.end_latitude, end_longitude = Globals.end_longitude)
+        end_y = ending_block.y
+        end_x = ending_block.x
+
+        for i in Globals().frange(start_y, end_y + 1, 1):
+            for j in Globals().frange(start_x, end_x + 1, 1):
+                nearest_shelter = BlockDictComputation().get_nearest_shelter(i,j)
+                block = BlocksData.objects.get(x = j, y = i)
+                blockDict = BlocksDict()
+                blockDict.create(block, nearest_shelter)
+
+        return HttpResponse("Done")
 
 # def DemandSupply():
     # fetch available with self

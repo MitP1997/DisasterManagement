@@ -29,6 +29,32 @@ SUPPLY_TYPE_CHOICES = (
     ('w','water'),
 )
 
+class BlocksData(models.Model):
+    start_latitude = models.FloatField()
+    start_longitude = models.FloatField()
+    end_latitude = models.FloatField()
+    end_longitude = models.FloatField()
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    x = models.IntegerField()
+    y = models.IntegerField()
+
+    def get_block(self, latitude, longitude):
+        block = BlocksData.objects.get(start_latitude__lte = latitude ,start_longitude__lte = longitude, end_latitude__gte = latitude, end_longitude__gte = longitude )
+        return block
+
+    def create(self,start_lat,start_long,end_lat,end_long,x,y):
+        self.start_latitude = start_lat
+        self.start_longitude = start_long
+        self.end_latitude = end_lat
+        self.end_longitude = end_long
+        self.latitude = (start_lat + end_lat)*1.000000/2
+        self.longitude = (start_long + end_long)*1.000000/2
+        self.x = x
+        self.y = y
+        self.save()
+
+
 class Shelter(models.Model):
     name = models.CharField(max_length=100)
     total_capacity_of_people = models.IntegerField()
@@ -36,12 +62,14 @@ class Shelter(models.Model):
     shelter_latitude = models.DecimalField(max_digits=9,decimal_places=6)
     shelter_longitude = models.DecimalField(max_digits=9,decimal_places=6)
     shelter_type = models.CharField(max_length=10,choices = SHELTER_TYPE_CHOICES,default='g')
+    block = models.ForeignKey(BlocksData, blank = True, null = True)
 
     def create(self,shelter_form):
         self.name = shelter_form.cleaned_data.get('name')
         self.total_capacity_of_people = shelter_form.cleaned_data.get('total_capacity_of_people')
         self.shelter_latitude = shelter_form.cleaned_data.get('shelter_latitude')
         self.shelter_longitude = shelter_form.cleaned_data.get('shelter_longitude')
+        self.block = BlocksData().get_block(shelter_form.cleaned_data.get('shelter_latitude'), shelter_form.cleaned_data.get('shelter_longitude'))
         self.save()
 
     def updateOccupiedCapacity(self,capacity):
@@ -50,6 +78,15 @@ class Shelter(models.Model):
 
     def updateTotalCapacity(self,capacity):
         self.total_capacity_of_people = self.total_capacity_of_people + capacity
+        self.save()
+
+class BlocksDict(models.Model):
+    block = models.ForeignKey(BlocksData)
+    shelter = models.ForeignKey(Shelter, blank = True, null = True)
+
+    def create(self,block,shelter):
+        self.block = block
+        self.shelter = shelter
         self.save()
 
 class Stocks(models.Model):
@@ -133,7 +170,10 @@ class Civilians(models.Model):
     pincode = models.IntegerField()
     blood_group = models.CharField(max_length=100)
     current_shelter = models.ForeignKey(Shelter, related_name='current_shelter', null = True, blank = True)
-    allocated_shelter = models.ForeignKey(Shelter, related_name='allocated_shelter', null = True, blank = True)
+    assigned_shelter = models.ForeignKey(Shelter, related_name='assigned_shelter', null = True, blank = True)
+    latitude = models.DecimalField(max_digits=9,decimal_places=6)
+    longitude = models.DecimalField(max_digits=9,decimal_places=6)
+    block = models.ForeignKey(BlocksData, blank = True, null = True)
 
     def create(self,civilian_registration_form):
         try:
@@ -161,12 +201,15 @@ class Civilians(models.Model):
         self.country = civilian_registration_form.cleaned_data.get('country')
         self.pincode = civilian_registration_form.cleaned_data.get('pincode')
         self.blood_group = civilian_registration_form.cleaned_data.get('blood_group')
+        self.latitude = civilian_registration_form.cleaned_data.get('latitude')
+        self.longitude = civilian_registration_form.cleaned_data.get('longitude')
+        self.block = BlocksData().get_block(civilian_registration_form.cleaned_data.get('latitude'), civilian_registration_form.cleaned_data.get('longitude'))
         self.save()
 
-    def updateAssignedShelter(self,shelter_id):
-        self.assigned_shelter = Shelter.objects.get(id=shelter_id)
+    def updateAssignedShelter(self,shelter):
+        self.assigned_shelter = shelter
         self.save()
-        
+
     def updateCurrentShelter(self,shelter):
         self.current_shelter = shelter
         self.save()
