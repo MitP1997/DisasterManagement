@@ -251,7 +251,7 @@ class Globals():
     a_minute_to_km = 2
     block_side = 2
 
-    def manhattan_distance(sx, sy, ex, ey):
+    def manhattan_distance(self, sx, sy, ex, ey):
         return abs(ex - sx) + abs(ey - sy)
 
     def frange(self, start, end=None, inc=None):
@@ -306,7 +306,7 @@ class BlockDictComputation(View):
         shelters = Shelter.objects.all()
         nearest_shelter = None
         min_dist = BlocksData.objects.all().count()
-        for i in range(len(shelters.iteritems())):
+        for i in range(len(shelters)):
             new_dist = Globals().manhattan_distance(x, y, shelters[i].block.x, shelters[i].block.y)
             if new_dist <= min_dist:
                 min_dist = new_dist
@@ -315,10 +315,13 @@ class BlockDictComputation(View):
         return nearest_shelter
 
     def get(self,request,*args,**kwargs):
-        starting_block = BlocksData.objects.get(start_latitude = Globals.start_latitude, start_longitude = Globals.start_longitude)
+        increment = Globals.block_side*1.000000/Globals.degree_to_km
+        all_blocks = BlocksData.objects.all()
+        all_blocks_count = all_blocks.count()
+        ending_block = all_blocks[all_blocks_count-1]
+        starting_block = all_blocks[0]
         start_y = starting_block.y
         start_x = starting_block.x
-        ending_block = BlocksData.objects.get(end_latitude = Globals.end_latitude, end_longitude = Globals.end_longitude)
         end_y = ending_block.y
         end_x = ending_block.x
 

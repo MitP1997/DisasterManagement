@@ -64,6 +64,10 @@ class Shelter(models.Model):
     shelter_type = models.CharField(max_length=10,choices = SHELTER_TYPE_CHOICES,default='g')
     block = models.ForeignKey(BlocksData, blank = True, null = True)
 
+    # def save(self):
+    #     self.block = BlocksData().get_block(self.shelter_latitude, self.shelter_longitude)
+    #     super(Shelter,self).save()
+    
     def create(self,shelter_form):
         self.name = shelter_form.cleaned_data.get('name')
         self.total_capacity_of_people = shelter_form.cleaned_data.get('total_capacity_of_people')
@@ -71,6 +75,7 @@ class Shelter(models.Model):
         self.shelter_longitude = shelter_form.cleaned_data.get('shelter_longitude')
         self.block = BlocksData().get_block(shelter_form.cleaned_data.get('shelter_latitude'), shelter_form.cleaned_data.get('shelter_longitude'))
         self.save()
+
 
     def updateOccupiedCapacity(self,capacity):
         self.capacity_occupied = self.capacity_occupied + capacity
