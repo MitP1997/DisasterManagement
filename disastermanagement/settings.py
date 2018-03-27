@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
+    'fcm_django',
 ]
 
 MIDDLEWARE = [
@@ -39,6 +40,18 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# TODO: Add fcm settings
+FCM_DJANGO_SETTINGS = {
+        "FCM_SERVER_KEY": "AAAAvL1RUhg:APA91bEzMJIsEO9ENX2rrzGnXw5SRXQpxdK3iT4-hD29L07Q9iqObADRefjQKvb0va9p7vdrX5wJ_-Z6qa5LrH6vLYZ1Rgj10gyx0gxGVghwpAGeOCcbX7-9hDzGK-lW-5GjjODdWa8o",
+         # true if you want to have only one active device per registered user at a time
+         # default: False
+        "ONE_DEVICE_PER_USER": False,
+         # devices to which notifications cannot be sent,
+         # are deleted upon receiving error response from FCM
+         # default: False
+        "DELETE_INACTIVE_DEVICES": False,
+}
 
 ROOT_URLCONF = 'disastermanagement.urls'
 
