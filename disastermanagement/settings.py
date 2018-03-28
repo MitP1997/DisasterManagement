@@ -41,7 +41,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# TODO: Add fcm settings
 FCM_DJANGO_SETTINGS = {
         "FCM_SERVER_KEY": "AAAAvL1RUhg:APA91bEzMJIsEO9ENX2rrzGnXw5SRXQpxdK3iT4-hD29L07Q9iqObADRefjQKvb0va9p7vdrX5wJ_-Z6qa5LrH6vLYZ1Rgj10gyx0gxGVghwpAGeOCcbX7-9hDzGK-lW-5GjjODdWa8o",
          # true if you want to have only one active device per registered user at a time

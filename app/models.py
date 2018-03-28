@@ -57,9 +57,10 @@ class BlocksData(models.Model):
 
 
 class Shelter(models.Model):
+    active = models.BooleanField(default=True)
     name = models.CharField(max_length=100)
     total_capacity_of_people = models.IntegerField()
-    # TODO: Add active feild and expecte capacity
+    expected_capacity =  models.IntegerField(default=0)
     capacity_occupied =  models.IntegerField(default=0)
     shelter_latitude = models.DecimalField(max_digits=9,decimal_places=6)
     shelter_longitude = models.DecimalField(max_digits=9,decimal_places=6)
@@ -85,6 +86,10 @@ class Shelter(models.Model):
 
     def updateTotalCapacity(self,capacity):
         self.total_capacity_of_people = self.total_capacity_of_people + capacity
+        self.save()
+
+    def updateShelterStatus(self,activeStatus):
+        self.active = activeStatus
         self.save()
 
 class BlocksDict(models.Model):
@@ -181,7 +186,7 @@ class Civilians(models.Model):
     latitude = models.DecimalField(max_digits=9,decimal_places=6)
     longitude = models.DecimalField(max_digits=9,decimal_places=6)
     block = models.ForeignKey(BlocksData, blank = True, null = True)
-    # TODO: Add "devce_id" 
+    device_id = models.CharField(max_length=500, blank=True, null=True)
 
     def create(self,civilian_registration_form):
         try:
@@ -212,6 +217,8 @@ class Civilians(models.Model):
         self.latitude = civilian_registration_form.cleaned_data.get('latitude')
         self.longitude = civilian_registration_form.cleaned_data.get('longitude')
         self.block = BlocksData().get_block(civilian_registration_form.cleaned_data.get('latitude'), civilian_registration_form.cleaned_data.get('longitude'))
+        if civilian_registration_form.cleaned_data.get('device_id') is not None:
+            self.device_id = civilian_registration_form.cleaned_data.get('device_id')
         self.save()
 
     def updateAssignedShelter(self,shelter):
@@ -220,6 +227,10 @@ class Civilians(models.Model):
 
     def updateCurrentShelter(self,shelter):
         self.current_shelter = shelter
+        self.save()
+
+    def updateDeviceId(self,device_id):
+        self.device_id = device_id
         self.save()
 
 class SystemUsers(AbstractUser):

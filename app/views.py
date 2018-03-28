@@ -27,7 +27,7 @@ class AdminHome(ListView):
     context_object_name = 'shelter_list'
 
     def get_context_data(self, **kwargs):
-     
+
         context = super(AdminHome, self).get_context_data(**kwargs)
         context["Stock"] = Stocks.objects.filter()
         return context
@@ -37,7 +37,7 @@ class AdminShelter(DetailView):
     model = Shelter
 
     def get_context_data(self, **kwargs):
-     
+
         context = super(AdminShelter, self).get_context_data(**kwargs)
         context["Civilians"] = Civilians.objects.filter(current_shelter=self.kwargs.get('pk'))
         context["Officials"] = SystemUsers.objects.filter(shelter=self.kwargs.get('pk'),user_role='o')
@@ -50,9 +50,9 @@ class AdminCivilians(ListView):
     template_name = 'Admin-Portal/admin_civilians.html'
     model = Civilians
     context_object_name = 'civilian_list'
-    
+
     def get_context_data(self, **kwargs):
-     
+
         context = super(AdminCivilians, self).get_context_data(**kwargs)
         context["shelter_list"] = Shelter.objects.filter()
         return context
@@ -63,9 +63,9 @@ class AdminSuppliers(ListView):
     model = SupplierLogs
     paginate_by = 5
     context_object_name = 'suppliers_list'
-        
+
     def get_context_data(self, **kwargs):
-        
+
         context = super(AdminSuppliers, self).get_context_data(**kwargs)
         context["Supplier"] = SystemUsers.objects.filter(user_role='s').values()
         context["shelter_list"] = Shelter.objects.filter()
@@ -422,7 +422,6 @@ class Alert():
     def alertForShelterAssigning(civilian,shelter,message):
         url = 'http://api.msg91.com/api/sendhttp.php?authkey=196077A8m64pIIW5a72c40d&sender=SIHC18&route=4&country=91&message'+message+'&flash=1&unicode=1&mobiles=91'+civilian.contact
         response = urllib2.urlopen(url).read()
-        # TODO: Add fcm notification
         devices = Civilians.objects.get(device_id = civilian.device_id)
         Notifications().notify(devices,"notification-body")
         return
