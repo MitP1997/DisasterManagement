@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from django_extensions.db.models import TimeStampedModel
+from fcm_django.models import FCMDevice
 
 SHELTER_TYPE_CHOICES =(
     ('g','government'),
@@ -58,6 +59,7 @@ class BlocksData(models.Model):
 class Shelter(models.Model):
     name = models.CharField(max_length=100)
     total_capacity_of_people = models.IntegerField()
+    # TODO: Add active feild and expecte capacity
     capacity_occupied =  models.IntegerField(default=0)
     shelter_latitude = models.DecimalField(max_digits=9,decimal_places=6)
     shelter_longitude = models.DecimalField(max_digits=9,decimal_places=6)
@@ -67,7 +69,7 @@ class Shelter(models.Model):
     # def save(self):
     #     self.block = BlocksData().get_block(self.shelter_latitude, self.shelter_longitude)
     #     super(Shelter,self).save()
-    
+
     def create(self,shelter_form):
         self.name = shelter_form.cleaned_data.get('name')
         self.total_capacity_of_people = shelter_form.cleaned_data.get('total_capacity_of_people')
@@ -179,6 +181,7 @@ class Civilians(models.Model):
     latitude = models.DecimalField(max_digits=9,decimal_places=6)
     longitude = models.DecimalField(max_digits=9,decimal_places=6)
     block = models.ForeignKey(BlocksData, blank = True, null = True)
+    # TODO: Add "devce_id" 
 
     def create(self,civilian_registration_form):
         try:

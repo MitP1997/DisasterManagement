@@ -7,12 +7,14 @@ from django.utils import timezone
 from .models import *
 from forms import *
 from django.views.generic.edit import FormView
-from django.views import View
-
-
-from django.forms.formsets import formset_factory
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
+from django.views import View
+import urllib2
+import json
+from fcm_django.models import FCMDevice
+
+from django.forms.formsets import formset_factory
 
 from django.contrib.auth import login
 
@@ -361,7 +363,7 @@ class PreDRAPComputation(View):
                 x = x + 1
             y = y + 1
         end_time = timezone.now()
-        return HttpResponse("Start "+start_time+"\nEnd "+end_time)
+        return HttpResponse("Start "+str(start_time)+"\nEnd "+str(end_time))
 
 class BlockDictComputation(View):
 
@@ -396,6 +398,35 @@ class BlockDictComputation(View):
                 blockDict.create(block, nearest_shelter)
 
         return HttpResponse("Done")
+
+class ExecuteDRAP(View):
+
+    def get(self, request, *args, **kwargs):
+        civilians = Civilians.objects.all()
+        for civilian in civilians:
+            assignShelter(civilian)
+        return
+
+    def assignShelter(civilian):
+        block_of_civilian = civilian.block
+        assigned_shelter = BlocksDict.object.get(block = block_of_civilian).shelter
+        civilian.updateAssignedShelter(assigned_shelter)
+        message = ""
+        Alert().alertForShelterAssigning(civilian,assigned_shelter,message)
+
+class Notifications():
+    def notify(devices,msg_body):
+        devices.send_message(title="NotificationTitle", body=""+msg_body)
+
+class Alert():
+    def alertForShelterAssigning(civilian,shelter,message):
+        url = 'http://api.msg91.com/api/sendhttp.php?authkey=196077A8m64pIIW5a72c40d&sender=SIHC18&route=4&country=91&message'+message+'&flash=1&unicode=1&mobiles=91'+civilian.contact
+        response = urllib2.urlopen(url).read()
+        # TODO: Add fcm notification
+        devices = Civilians.objects.get(device_id = civilian.device_id)
+        Notifications().notify(devices,"notification-body")
+        return
+
 
 # def DemandSupply():
     # fetch available with self
