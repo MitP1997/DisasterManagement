@@ -352,15 +352,16 @@ class ExecuteDRAP(View):
         Alert().alertForShelterAssigning(civilian,assigned_shelter,message)
 
 class Notifications():
-    def notify(devices,msg_title):
-        devices.send_message(title="Title", body=""+msg_title)
+    def notify(devices,msg_body):
+        devices.send_message(title="NotificationTitle", body=""+msg_body)
 
 class Alert():
     def alertForShelterAssigning(civilian,shelter,message):
         url = 'http://api.msg91.com/api/sendhttp.php?authkey=196077A8m64pIIW5a72c40d&sender=SIHC18&route=4&country=91&message'+message+'&flash=1&unicode=1&mobiles=91'+civilian.contact
         response = urllib2.urlopen(url).read()
         # TODO: Add fcm notification
-        
+        devices = Civilians.objects.get(device_id = civilian.device_id)
+        Notifications().notify(devices,"notification-body")
         return
 
 

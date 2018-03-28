@@ -181,7 +181,7 @@ class Civilians(models.Model):
     latitude = models.DecimalField(max_digits=9,decimal_places=6)
     longitude = models.DecimalField(max_digits=9,decimal_places=6)
     block = models.ForeignKey(BlocksData, blank = True, null = True)
-    # TODO: Add devceId
+    # TODO: Add "devce_id" 
 
     def create(self,civilian_registration_form):
         try:
