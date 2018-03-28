@@ -15,8 +15,12 @@ urlpatterns = [
     url(r'^admin_supplier/$', AdminSuppliers.as_view(), name='supplier-details'),
     url(r'^admin_officials/$', AdminOfficals.as_view(), name='official-details'),
     url(r'^admin_civilians/$', AdminCivilians.as_view(), name='civilian-home'),
-    url(r'^admin_shelter/(?P<pk>\d+)/$', AdminShelter.as_view(), name='shelter-details'),
+    url(r'^admin_shelter/(?P<pk>\d+)/$', AdminShelter.as_view(), name='shelter-details-admin'),
     
+    url(r'^official-civilians/(?P<pk>\d+)/$', OfficialCivilians.as_view(), name='civilian-shelter'),
+    url(r'^official-shelter/(?P<pk>\d+)/$', OfficialShelter.as_view(), name='shelter-details-official'),
+    
+
     url(r'register-at-shelter/',user_is_operator(login_required(RegisterAtShelterFormView.as_view())),name='register_at_shelter'),
     url(r'allocate-at-shelter/(?P<type>[a-z]+)/',user_is_operator(login_required(AllocationAtShelterFormView.as_view())),name='allocate_at_shelter'),
     url(r'make-blocks/',PreDRAPComputation.as_view(),name='pre_drap_comp'),
