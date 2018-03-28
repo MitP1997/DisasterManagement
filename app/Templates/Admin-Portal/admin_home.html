@@ -1,0 +1,477 @@
+{% extends './admin_base.html' %}
+{% load staticfiles %}
+
+
+{% block css %}
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      .map{
+        padding: 15px;
+        height: 550px;
+      }
+      #map {
+        height: 100%;
+        position: static! important;
+      }
+      .gm-style-iw{
+        left: 25px!important;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="content-wrap">
+      <div class="main">
+        <div class="container-fluid">
+          <!-- /# row -->
+          <section id="main-content">
+            <div class="row">
+              <div class="col-lg-12">
+                  <div class="card nestable-cart">
+                      <div class="card-title">
+                          <h4>Shelter Locations</h4>
+                      </div>
+                      <div class="map">
+                        <div id="map"></div>
+                          <!-- <div id="vmap13" class="vmap"></div> -->
+                      </div>
+                  </div>
+                  <!-- /# card -->
+              </div>
+              <div class="col-lg-12">
+                <div class="footer">
+                  <p>Made with love by mb.java</p>
+                </div>
+                <div>
+                  
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0I2OGOk7IFYVE3NwUhjtjqfcweDJFWJo&callback=initMap"
+    async defer></script>
+      <script type="text/javascript">
+        var shelterLoc = [];
+        var contentInfo = [];
+        var shelterids = [];
+        var stock = [];
+      </script>
+
+    {% for shelter in shelter_list %}
+      <script type="text/javascript">
+         stock[{{shelter.id }}] = {"water" : 0,"food" : 0,"firstaid" : 0,"bedding" : 0};
+      </script>
+    {% endfor %}
+
+      {% for Stock in Stock %} 
+        <script type="text/javascript">
+          var water = '{{Stock.water_needed|safe}}';
+          var food = '{{Stock.food_packets_needed|safe}}';
+          var firstaid = '{{Stock.first_aid_packets_needed|safe}}';
+          var bedding = '{{Stock.bedding_packets_needed|safe}}';
+          stock[{{ Stock.shelter.id }}] = {"water" : water,"food" : food,"firstaid" : firstaid,"bedding" : bedding};
+          console.log(stock[1].water);
+        </script>
+      {% endfor %}
+
+    {% for shelter in shelter_list %}
+      <script type="text/javascript">
+          shelterLoc.push({ 'lat': {{ shelter.shelter_latitude|safe }}, 'lng':{{ shelter.shelter_longitude|safe }} } );
+          var table = 
+                    '<div class="card-title">'+
+                        '<h4> Total Capacity {{ shelter.total_capacity_of_people }}</h4> '+
+                    '</div>'+
+                    '<div class="table-responsive">'+
+                        '<table class="table table-striped">'+
+                            '<thead>'+
+                                '<tr>'+
+                                    '<th>Parameter</th> '+
+                                    '<th>Status</th>'+
+                                '</tr>'+
+                            '</thead>'+
+                            '<tbody>'+
+                                '<tr>'+
+                                    '<th scope="row">Occupied</th> '+
+                                    '<td class="color-primary">{{ shelter.capacity_occupied }}</td>'+
+                                '</tr>'+
+                                '<tr>'+
+                                    '<th scope="row">Food Packets</th>'+
+                                    '<td class="color-primary">'+ stock[{{shelter.id}}].food +'</td>'+
+                                '</tr>'+
+                                '<tr>'+
+                                    '<th scope="row">First Aid</th>'+
+                                    '<td class="color-primary">'+ stock[{{shelter.id}}].firstaid +'</td>'+
+                                '</tr>'+
+                                '<tr>'+
+                                    '<th scope="row">Water</th>'+
+                                    '<td class="color-primary">'+ stock[{{shelter.id}}].water +'</td>'+
+                                '</tr>'+
+                                '<tr>'+
+                                    '<th scope="row">Bed</th>'+
+                                    '<td class="color-primary">'+ stock[{{shelter.id}}].bedding +'</td>'+
+                                '</tr>'+
+                            '</tbody>'+
+                        '</table>'+
+                    '</div>';
+          contentInfo.push(table);
+          shelterids.push( {{ shelter.id|safe }} );
+      </script>
+    {% endfor %}
+    <script>
+      var map;
+      console.log(shelterids);
+      function initMap()
+        {
+          var locations = shelterLoc;
+        // [
+        //   {
+        //     lat: 11.623377,
+        //     lng: 92.7264828
+        //   },
+        //   {
+        //     lat: 11.720196,
+        //     lng: 92.6561571
+        //   },
+        //   {
+        //     lat: 7.9768404,
+        //     lng: 93.5509074
+        //   },
+        //   {
+        //     lat: 7.1205395,
+        //     lng: 93.7841503
+        //   },
+        //   {
+        //     lat: 9.1573175,
+        //     lng: 92.7580701
+        //   },
+        //   {
+        //     lat: 12.506951,
+        //     lng: 92.9138505
+        //   },
+        //   {
+        //     lat: 13.265184,
+        //     lng: 92.982496
+        //   },
+        // ];
+          var map = new google.maps.Map(
+            document.getElementById('map'),
+            {
+              zoom: 6.9,
+              center:
+              {
+                lat: 10.222,
+                lng: 92.6586
+              },
+              styles:
+            [
+              {
+                "elementType": "geometry",
+                "stylers": [
+                {
+                  "color": "#3f5ea7"
+                }]
+              },
+              {
+                "elementType": "labels.text.fill",
+                "stylers": [
+                {
+                  "color": "#8ec3b9"
+                }]
+              },
+              {
+                "elementType": "labels.text.stroke",
+                "stylers": [
+                {
+                  "color": "#1a3646"
+                }]
+              },
+              {
+                "featureType": "administrative.country",
+                "elementType": "geometry.stroke",
+                "stylers": [
+                {
+                  "color": "#4b6878"
+                }]
+              },
+              {
+                "featureType": "administrative.land_parcel",
+                "stylers": [
+                {
+                  "visibility": "off"
+                }]
+              },
+              {
+                "featureType": "administrative.land_parcel",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                {
+                  "color": "#64779e"
+                }]
+              },
+              {
+                "featureType": "administrative.neighborhood",
+                "stylers": [
+                {
+                  "visibility": "off"
+                }]
+              },
+              {
+                "featureType": "administrative.province",
+                "elementType": "geometry.stroke",
+                "stylers": [
+                {
+                  "color": "#4b6878"
+                }]
+              },
+              {
+                "featureType": "landscape.man_made",
+                "elementType": "geometry.stroke",
+                "stylers": [
+                {
+                  "color": "#334e87"
+                }]
+              },
+              {
+                "featureType": "landscape.natural",
+                "elementType": "geometry",
+                "stylers": [
+                {
+                  "color": "#023e58"
+                }]
+              },
+              {
+                "featureType": "poi",
+                "elementType": "geometry",
+                "stylers": [
+                {
+                  "color": "#283d6a"
+                }]
+              },
+              {
+                "featureType": "poi",
+                "elementType": "labels.text",
+                "stylers": [
+                {
+                  "visibility": "off"
+                }]
+              },
+              {
+                "featureType": "poi",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                {
+                  "color": "#6f9ba5"
+                }]
+              },
+              {
+                "featureType": "poi",
+                "elementType": "labels.text.stroke",
+                "stylers": [
+                {
+                  "color": "#1d2c4d"
+                }]
+              },
+              {
+                "featureType": "poi.park",
+                "elementType": "geometry.fill",
+                "stylers": [
+                {
+                  "color": "#023e58"
+                }]
+              },
+              {
+                "featureType": "poi.park",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                {
+                  "color": "#3C7680"
+                }]
+              },
+              {
+                "featureType": "road",
+                "elementType": "geometry",
+                "stylers": [
+                {
+                  "color": "#304a7d"
+                }]
+              },
+              {
+                "featureType": "road",
+                "elementType": "labels",
+                "stylers": [
+                {
+                  "visibility": "off"
+                }]
+              },
+              {
+                "featureType": "road",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                {
+                  "color": "#98a5be"
+                }]
+              },
+              {
+                "featureType": "road",
+                "elementType": "labels.text.stroke",
+                "stylers": [
+                {
+                  "color": "#1d2c4d"
+                }]
+              },
+              {
+                "featureType": "road.arterial",
+                "elementType": "labels",
+                "stylers": [
+                {
+                  "visibility": "off"
+                }]
+              },
+              {
+                "featureType": "road.highway",
+                "elementType": "geometry",
+                "stylers": [
+                {
+                  "color": "#2c6675"
+                }]
+              },
+              {
+                "featureType": "road.highway",
+                "elementType": "geometry.stroke",
+                "stylers": [
+                {
+                  "color": "#255763"
+                }]
+              },
+              {
+                "featureType": "road.highway",
+                "elementType": "labels",
+                "stylers": [
+                {
+                  "visibility": "off"
+                }]
+              },
+              {
+                "featureType": "road.highway",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                {
+                  "color": "#b0d5ce"
+                }]
+              },
+              {
+                "featureType": "road.highway",
+                "elementType": "labels.text.stroke",
+                "stylers": [
+                {
+                  "color": "#023e58"
+                }]
+              },
+              {
+                "featureType": "road.local",
+                "stylers": [
+                {
+                  "visibility": "off"
+                }]
+              },
+              {
+                "featureType": "transit",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                {
+                  "color": "#98a5be"
+                }]
+              },
+              {
+                "featureType": "transit",
+                "elementType": "labels.text.stroke",
+                "stylers": [
+                {
+                  "color": "#1d2c4d"
+                }]
+              },
+              {
+                "featureType": "transit.line",
+                "elementType": "geometry.fill",
+                "stylers": [
+                {
+                  "color": "#283d6a"
+                }]
+              },
+              {
+                "featureType": "transit.station",
+                "elementType": "geometry",
+                "stylers": [
+                {
+                  "color": "#3a4762"
+                }]
+              },
+              {
+                "featureType": "water",
+                "elementType": "geometry",
+                "stylers": [
+                {
+                  "color": "#0e1626"
+                }]
+              },
+              {
+                "featureType": "water",
+                "elementType": "labels.text",
+                "stylers": [
+                {
+                  "visibility": "off"
+                }]
+              },
+              {
+                "featureType": "water",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                {
+                  "color": "#4e6d70"
+                }]
+              }
+            ]
+            });
+          for (var i = 0; i <contentInfo.length; ++i)
+          {
+            var marker = new google.maps.Marker(
+            {
+              position: locations[i],
+              map: map,
+            });
+            attachContentMessage(marker,contentInfo[i],shelterids[i]);
+          }
+        }
+        // Attaches an info window to a marker with the provided message. When the
+        // marker is clicked, the info window will open with the secret message.
+      function attachContentMessage(marker, Message, id)
+      {
+        var infowindow = new google.maps.InfoWindow({
+            content: Message
+          });
+          marker.addListener('mouseover',function (){
+            infowindow.open(marker.get('map'), marker);
+          });
+          marker.addListener('mouseout',function() {
+            infowindow.close();
+          });    
+          marker.addListener('click',function(){
+            location.href = '/admin_shelter/'+id+'/';
+          })
+      }
+
+    </script>
+{% endblock %}
+
+
+
+

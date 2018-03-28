@@ -19,6 +19,69 @@ from django.contrib.auth import login
 logging.basicConfig(level=logging.INFO)
 logger=logging.getLogger(__name__)
 
+class AdminHome(ListView):
+    template_name = 'Admin-Portal/admin_home.html'
+    model = Shelter
+    context_object_name = 'shelter_list'
+
+    def get_context_data(self, **kwargs):
+     
+        context = super(AdminHome, self).get_context_data(**kwargs)
+        context["Stock"] = Stocks.objects.filter()
+        return context
+
+class AdminShelter(DetailView):
+    template_name = 'Admin-Portal/shelter_detail.html'
+    model = Shelter
+
+    def get_context_data(self, **kwargs):
+     
+        context = super(AdminShelter, self).get_context_data(**kwargs)
+        context["Civilians"] = Civilians.objects.filter(current_shelter=self.kwargs.get('pk'))
+        context["Officials"] = SystemUsers.objects.filter(shelter=self.kwargs.get('pk'),user_role='o')
+        context["Supplier"] = SystemUsers.objects.filter(shelter=self.kwargs.get('pk'),user_role='s')
+        context["Stock"] = Stocks.objects.filter(shelter=self.kwargs.get('pk'))
+        context["shelter_list"] = Shelter.objects.filter()
+        return context
+
+class AdminCivilians(ListView):
+    template_name = 'Admin-Portal/admin_civilians.html'
+    model = Civilians
+    context_object_name = 'civilian_list'
+    
+    def get_context_data(self, **kwargs):
+     
+        context = super(AdminCivilians, self).get_context_data(**kwargs)
+        context["shelter_list"] = Shelter.objects.filter()
+        return context
+
+
+class AdminSuppliers(ListView):
+    template_name = 'Admin-Portal/admin_suppliers.html'
+    model = SupplierLogs
+    paginate_by = 5
+    context_object_name = 'suppliers_list'
+        
+    def get_context_data(self, **kwargs):
+        
+        context = super(AdminSuppliers, self).get_context_data(**kwargs)
+        context["Supplier"] = SystemUsers.objects.filter(user_role='s').values()
+        context["shelter_list"] = Shelter.objects.filter()
+        return context
+
+
+class AdminOfficals(ListView):
+    template_name = 'Admin-Portal/admin_officials.html'
+    model = SystemUsers
+    paginate_by = 5
+    context_object_name = 'officials_list'
+
+    def get_context_data(self, **kwargs):
+        context = super(AdminOfficals, self).get_context_data(**kwargs)
+        context['officials_list'] = SystemUsers.objects.filter(user_role='o')
+        context["shelter_list"] = Shelter.objects.filter()
+        return context
+
 # Create your views here.
 """
 class DonationListView(ListView):
