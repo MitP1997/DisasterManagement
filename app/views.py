@@ -57,7 +57,6 @@ class AdminCivilians(ListView):
         context["shelter_list"] = Shelter.objects.filter()
         return context
 
-
 class AdminSuppliers(ListView):
     template_name = 'Admin-Portal/admin_suppliers.html'
     model = SupplierLogs
@@ -70,7 +69,6 @@ class AdminSuppliers(ListView):
         context["Supplier"] = SystemUsers.objects.filter(user_role='s').values()
         context["shelter_list"] = Shelter.objects.filter()
         return context
-
 
 class AdminOfficals(ListView):
     template_name = 'Admin-Portal/admin_officials.html'

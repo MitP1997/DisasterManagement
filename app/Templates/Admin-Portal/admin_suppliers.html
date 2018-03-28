@@ -33,7 +33,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {% for civ in Civilians %}
+                                                    {% for civ in suppliers_list %}
                                                     <tr>
                                                         <td>
                                                             {{ civ.first_name }} {{ civ.last_name }}
@@ -81,7 +81,7 @@
     <script src="{% static "js/lib/owl-carousel/owl.carousel-init.js" %}"></script>
     <script src="{% static "js/scripts.js" %}"></script>
     <script type="text/javascript">
-        c = "{{ Supplier|safe }}";
+        c = "{{ suppliers_list|safe }}";
         console.log(c);
     </script>
     <!-- scripit init-->

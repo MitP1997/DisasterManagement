@@ -247,7 +247,6 @@ class CivilianAllocationForm(forms.Form):
             required=True,
         )
 
-
 class LoginForm(forms.Form):
     """
     Complete form for login of system users
