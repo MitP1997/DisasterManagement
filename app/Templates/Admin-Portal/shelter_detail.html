@@ -26,8 +26,8 @@
                                         </div> -->
                                         <div class="stat-icon dib"><i class="ti-paint-bucket color-primary border-primary"></i></div>
                                         <div class="stat-content dib">
+                                            <div class="stat-text">Water</div>
                                            {% for Stock in Stock %}
-                                                <div class="stat-text">Water</div>
                                                 <div class="stat-digit">{{ Stock.water_needed }}</div>
                                             {% endfor %}
                                         </div>
@@ -39,8 +39,8 @@
                                     <div class="stat-widget-one">
                                         <div class="stat-icon dib"><i class="ti-package color-warning border-warning"></i></div>
                                         <div class="stat-content dib">
+                                            <div class="stat-text">Food Packet</div>
                                             {% for Stock in Stock %}
-                                                <div class="stat-text">Food Packet</div>
                                                 <div class="stat-digit">{{ Stock.food_packets_needed }}</div>
                                             {% endfor %}
                                         </div>
@@ -52,8 +52,8 @@
                                     <div class="stat-widget-one">
                                         <div class="stat-icon dib"><i class="ti-plus color-danger border-danger"></i></div>
                                         <div class="stat-content dib">
+                                            <div class="stat-text">First Aid Packet</div>
                                             {% for Stock in Stock %}
-                                                <div class="stat-text">First Aid Packet</div>
                                                 <div class="stat-digit">{{ Stock.first_aid_packets_needed }}</div>
                                             {% endfor %}
                                         </div>
@@ -65,8 +65,8 @@
                                     <div class="stat-widget-one">
                                         <div class="stat-icon dib"><i class="fa fa-bed color-success border-success"></i></div>
                                         <div class="stat-content dib">
+                                            <div class="stat-text">Beds</div>
                                             {% for Stock in Stock %}
-                                                <div class="stat-text">Beds</div>
                                                 <div class="stat-digit">{{ Stock.bedding_packets_needed }}</div>
                                             {% endfor %}
                                         </div>

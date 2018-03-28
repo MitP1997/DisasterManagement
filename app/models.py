@@ -55,11 +55,14 @@ class BlocksData(models.Model):
         self.y = y
         self.save()
 
+    def __unicode__(self):
+        return "Block ("+str(self.x)+" , "+str(self.y)+")"
 
 class Shelter(models.Model):
+    active = models.BooleanField(default=True)
     name = models.CharField(max_length=100)
     total_capacity_of_people = models.IntegerField()
-    # TODO: Add active feild and expecte capacity
+    expected_capacity =  models.IntegerField(default=0)
     capacity_occupied =  models.IntegerField(default=0)
     shelter_latitude = models.DecimalField(max_digits=9,decimal_places=6)
     shelter_longitude = models.DecimalField(max_digits=9,decimal_places=6)
@@ -78,6 +81,9 @@ class Shelter(models.Model):
         self.block = BlocksData().get_block(shelter_form.cleaned_data.get('shelter_latitude'), shelter_form.cleaned_data.get('shelter_longitude'))
         self.save()
 
+    def updateExpectedCapacity(self,capacity):
+        self.capacity_occupied = self.capacity_occupied + capacity
+        self.save()
 
     def updateOccupiedCapacity(self,capacity):
         self.capacity_occupied = self.capacity_occupied + capacity
@@ -87,6 +93,13 @@ class Shelter(models.Model):
         self.total_capacity_of_people = self.total_capacity_of_people + capacity
         self.save()
 
+    def updateShelterStatus(self,activeStatus):
+        self.active = activeStatus
+        self.save()
+
+    def __unicode__(self):
+        return self.name
+
 class BlocksDict(models.Model):
     block = models.ForeignKey(BlocksData)
     shelter = models.ForeignKey(Shelter, blank = True, null = True)
@@ -95,6 +108,9 @@ class BlocksDict(models.Model):
         self.block = block
         self.shelter = shelter
         self.save()
+
+    def __unicode__(self):
+        return str(self.id)
 
 class Stocks(models.Model):
     shelter = models.ForeignKey(Shelter)
@@ -147,6 +163,9 @@ class Stocks(models.Model):
         self.water_available=self.water_available+quantity
         self.save()
 
+    def __unicode__(self):
+        return "Stocks for" + self.shelter.name
+
 class Families(models.Model):
     last_name = models.CharField(max_length=30)
     number_of_members = models.IntegerField(default = 1)
@@ -158,6 +177,9 @@ class Families(models.Model):
     def updateCount(self):
         self.number_of_members = self.number_of_members+1
         self.save()
+
+    def __unicode__(self):
+        return self.last_name
 
 class Civilians(models.Model):
     family = models.ForeignKey(Families)
@@ -181,7 +203,11 @@ class Civilians(models.Model):
     latitude = models.DecimalField(max_digits=9,decimal_places=6)
     longitude = models.DecimalField(max_digits=9,decimal_places=6)
     block = models.ForeignKey(BlocksData, blank = True, null = True)
-    # TODO: Add "devce_id" 
+    device_id = models.CharField(max_length=500, blank=True, null=True)
+
+    def save(self):
+        self.block = BlocksData().get_block(self.latitude, self.longitude)
+        super(Civilians,self).save()
 
     def create(self,civilian_registration_form):
         try:
@@ -212,15 +238,27 @@ class Civilians(models.Model):
         self.latitude = civilian_registration_form.cleaned_data.get('latitude')
         self.longitude = civilian_registration_form.cleaned_data.get('longitude')
         self.block = BlocksData().get_block(civilian_registration_form.cleaned_data.get('latitude'), civilian_registration_form.cleaned_data.get('longitude'))
+        if civilian_registration_form.cleaned_data.get('device_id') is not None:
+            self.device_id = civilian_registration_form.cleaned_data.get('device_id')
         self.save()
 
     def updateAssignedShelter(self,shelter):
         self.assigned_shelter = shelter
+        shelter.updateExpectedCapacity(1)
         self.save()
 
     def updateCurrentShelter(self,shelter):
         self.current_shelter = shelter
+        shelter.updateExpectedCapacity(-1)
+        shelter.updateOccupiedCapacity(1)
         self.save()
+
+    def updateDeviceId(self,device_id):
+        self.device_id = device_id
+        self.save()
+
+    def __unicode__(self):
+        return self.first_name+" "+self.last_name
 
 class SystemUsers(AbstractUser):
     civilian = models.ForeignKey(Civilians, blank = True, null = True)
@@ -234,6 +272,9 @@ class SystemUsers(AbstractUser):
         self.set_password(registration_form.cleaned_data.get('password'))
         self.save()
 
+    def __unicode__(self):
+        return self.user_role+"_"+self.civilian.first_name+" "+self.civilian.last_name
+
 class SupplierLogs(models.Model):
     supplier = models.ForeignKey(SystemUsers)
     quantity_supplied = models.IntegerField()
@@ -244,6 +285,9 @@ class SupplierLogs(models.Model):
         self.quantity_supplied = log_dict['quantity_supplied']
         self.supply_type = log_dict['supply_type']
         self.save()
+
+    def __unicode__(self):
+        return "Logs for supplier" + self.supplier.civilian.first_name
 
 class AllocationToFamilies(TimeStampedModel):
     family = models.ForeignKey(Families)
