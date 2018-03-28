@@ -39,7 +39,7 @@ class AdminShelter(DetailView):
     def get_context_data(self, **kwargs):
 
         context = super(AdminShelter, self).get_context_data(**kwargs)
-        context["Civilians"] = Civilians.objects.filter(current_shelter=self.kwargs.get('pk'))
+        context["Civilians"] = Civilians.objects.filter(current_shelter=Shelter.objects.get(id=self.kwargs.get('pk')))
         context["Officials"] = SystemUsers.objects.filter(shelter=self.kwargs.get('pk'),user_role='o')
         context["Supplier"] = SystemUsers.objects.filter(shelter=self.kwargs.get('pk'),user_role='s')
         context["Stock"] = Stocks.objects.filter(shelter=self.kwargs.get('pk'))
