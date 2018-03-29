@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import logging
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.utils import timezone
 from .models import *
@@ -16,7 +16,9 @@ from fcm_django.models import FCMDevice
 
 from django.forms.formsets import formset_factory
 
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
+from django.contrib import auth
+
 
 logging.basicConfig(level=logging.INFO)
 logger=logging.getLogger(__name__)
@@ -83,8 +85,6 @@ class AdminOfficals(ListView):
         context["shelter_list"] = Shelter.objects.filter()
         return context
 
-
-
 class OfficialShelter(DetailView):
     template_name = 'Official-Portal/shelter_detail.html'
     model = Shelter
@@ -112,47 +112,6 @@ class OfficialCivilians(ListView):
         context["civilian_list2"] = Civilians.objects.filter(assigned_shelter=Shelter.objects.get(id=self.kwargs.get('pk')))
         context["shelter"] = Shelter.objects.get(id=self.kwargs.get('pk'))
         return context
-
-
-# Create your views here.
-"""
-class DonationListView(ListView):
-    queryset = DonationModel.objects.filter(receiver='')
-    template_name = 'donationApp/donation_list.html'
-
-class DonationDetailView(DetailView):
-    model = DonationModel
-    template_name = 'donationApp/donation_detail.html'
-"""
-"""
-class OfficialRegistrationFormView(FormView):
-    template_name = 'official_register.html'
-    form_class = OfficialRegistrationForm
-    success_url = '/official-registered-successfully/'
-
-    def get_form_kwargs(self):
-        logger.info('called get form kwargs')
-        kwargs=super(OfficialRegistrationFormView,self).get_form_kwargs()
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        logger.info('called get context')
-        context=super(OfficialRegistrationFormView,self).get_context_data()
-        form=self.get_form(self.form_class)
-        context['form']=form
-        return context
-
-    def post(self, request, *args, **kwargs):
-        official_registration_form= OfficialRegistrationForm(request.POST)
-        if official_registration_form.is_valid():
-            system_user=SystemUsers()
-            system_user.create(official_registration_form)
-            return self.form_valid(official_registration_form,system_user)
-
-    def form_valid(self, form,form_object):
-        # Additional system user registration functionaity here (Maybe an Email??)
-        return super(OfficialRegistrationFormView, self).form_valid(form)
-"""
 
 class CivilianRegistrationFormView(FormView):
     template_name = 'civilian_register.html'
@@ -215,7 +174,7 @@ class SystemUserRegistrationFormView(FormView):
 class LoginFormView(FormView):
     template_name = "login.html"
     form_class = LoginForm
-    success_url = "/logged-in-successfully/"
+    success_url = "/admin-home/"
 
     def get_form_kwargs(self):
         logger.info('called get form kwargs')
@@ -232,11 +191,17 @@ class LoginFormView(FormView):
     def post(self, request, *args, **kwargs):
         login_form = LoginForm(request.POST)
         if login_form.is_valid():
+            user = auth.authenticate(username=login_form.cleaned_data.get('aadhar_number'), password=login_form.cleaned_data.get('password'))
             login(request,user)
+            if user.user_role == 'o':
+                self.success_url = '/official-home/'+str(user.shelter_id)+'/'
+            elif user.user_role == 's':
+                self.success_url = '/supplier-home/'
+            return self.form_valid(login_form, user)
 
     def form_valid(self, form, form_object):
         # Additional system user registration functionaity here (Maybe an Email??)
-        return super(LoginForm, self).form_valid(form)
+        return super(LoginFormView, self).form_valid(form)
 
 class CivilianUpdateShelterDetailView(DetailView):
     model = Civilians
@@ -456,6 +421,12 @@ class Alert():
         Notifications().notify(devices,"notification-body")
         return
 
+def userLogout(request):
+    if request.user.is_authenticated():
+        logout(request)
+        return redirect('../login/')
+    else:
+        return HttpResponseRedirect('../login/')
 
 # def DemandSupply():
     # fetch available with self

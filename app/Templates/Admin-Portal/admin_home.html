@@ -18,7 +18,7 @@
         left: 25px!important;
       }
       /* Optional: Makes the sample page fill the window. */
-      
+
     </style>
 {% endblock %}
 
@@ -46,7 +46,7 @@
                   <p>Made with love by mb.java</p>
                 </div>
                 <div>
-                  
+
                 </div>
               </div>
             </div>
@@ -72,7 +72,7 @@
       </script>
     {% endfor %}
 
-      {% for Stock in Stock %} 
+      {% for Stock in Stock %}
         <script type="text/javascript">
           var water = '{{Stock.water_needed|safe}}';
           var food = '{{Stock.food_packets_needed|safe}}';
@@ -86,7 +86,7 @@
     {% for shelter in shelter_list %}
       <script type="text/javascript">
           shelterLoc.push({ 'lat': {{ shelter.shelter_latitude|safe }}, 'lng':{{ shelter.shelter_longitude|safe }} } );
-          var table = 
+          var table =
                     '<div class="card-title">'+
                         '<h4> Total Capacity {{ shelter.total_capacity_of_people }}</h4> '+
                     '</div>'+
@@ -463,15 +463,11 @@
           });
           marker.addListener('mouseout',function() {
             infowindow.close();
-          });    
+          });
           marker.addListener('click',function(){
-            location.href = '/admin_shelter/'+id+'/';
+            location.href = '/admin-shelter/'+id+'/';
           })
       }
 
     </script>
 {% endblock %}
-
-
-
-

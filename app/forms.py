@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import login
+from django.contrib import auth
 
 
 SHELTER_TYPE_CHOICES =(

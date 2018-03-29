@@ -192,7 +192,7 @@ class Civilians(models.Model):
     address_line_2 = models.CharField(max_length=100 , blank = True , null = True)
     address_line_3 = models.CharField(max_length=100 , blank = True , null = True)
     gender = models.CharField(max_length=10, choices = GENDER_CHOICES,default='m')
-    aadhar_number = models.IntegerField()
+    aadhar_number = models.IntegerField(unique=True)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
@@ -272,8 +272,6 @@ class SystemUsers(AbstractUser):
         self.set_password(registration_form.cleaned_data.get('password'))
         self.save()
 
-    def __unicode__(self):
-        return self.user_role+"_"+self.civilian.first_name+" "+self.civilian.last_name
 
 class SupplierLogs(models.Model):
     supplier = models.ForeignKey(SystemUsers)
