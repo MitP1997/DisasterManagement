@@ -1,7 +1,10 @@
 Django==1.11.3
 pytz==2018.3
 django-extensions==2.0.6
-fcm-django==0.2.16
+#fcm-django==0.2.16
+pyfcm
 requests
 djangorestframework
 python-google-places==1.4.1
+googlemaps==2.5.1
+tsp==0.0.1

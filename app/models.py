@@ -69,6 +69,7 @@ class Shelter(models.Model):
     shelter_longitude = models.DecimalField(max_digits=9,decimal_places=6)
     shelter_type = models.CharField(max_length=10,choices = SHELTER_TYPE_CHOICES,default='g')
     block = models.ForeignKey(BlocksData, blank = True, null = True)
+    is_full = models.BooleanField(default=False)
 
     # def save(self):
     #     self.block = BlocksData().get_block(self.shelter_latitude, self.shelter_longitude)
@@ -80,6 +81,15 @@ class Shelter(models.Model):
         self.shelter_latitude = shelter_form.cleaned_data.get('shelter_latitude')
         self.shelter_longitude = shelter_form.cleaned_data.get('shelter_longitude')
         self.block = BlocksData().get_block(shelter_form.cleaned_data.get('shelter_latitude'), shelter_form.cleaned_data.get('shelter_longitude'))
+        self.save()
+
+    def createAPI(self,post):
+        self.name = post.get('name')
+        self.total_capacity_of_people = post.get('total_capacity_of_people')
+        self.shelter_latitude = post.get('shelter_latitude')
+        self.shelter_longitude = post.get('shelter_longitude')
+        self.shelter_type = 'a'
+        self.block = BlocksData().get_block(post.get('shelter_latitude'), post.get('shelter_longitude'))
         self.save()
 
     def updateExpectedCapacity(self,capacity):
@@ -96,6 +106,10 @@ class Shelter(models.Model):
 
     def updateShelterStatus(self,activeStatus):
         self.active = activeStatus
+        self.save()
+
+    def updateIsFull(self,bool):
+        self.is_full = bool
         self.save()
 
     def __unicode__(self):
@@ -150,22 +164,30 @@ class Stocks(models.Model):
 
     def updateFoodPacketsAvailable(self,quantity):
         self.food_packets_available=self.food_packets_available+quantity
+        if self.food_packets_available < self.shelter.total_capacity_of_people:
+            self.updateFoodPacketsNeeded(self.shelter.total_capacity_of_people - self.food_packets_available)
         self.save()
 
     def updateFirstAidPacketsAvailable(self,quantity):
         self.first_aid_packets_available=self.first_aid_packets_available+quantity
+        if self.first_aid_packets_available < self.shelter.total_capacity_of_people:
+            self.updateFirstAidPacketsNeeded( self.total_capacity_of_people - self.first_aid_packets_available)
         self.save()
 
     def updateBeddingPacketsAvailable(self,quantity):
         self.bedding_packets_available=self.bedding_packets_available+quantity
+        if self.bedding_packets_available < self.shelter.total_capacity_of_people:
+            self.updateBeddingPacketsNeeded( self.total_capacity_of_people - self.bedding_packets_available)
         self.save()
 
     def updateWaterAvailable(self,quantity):
         self.water_available=self.water_available+quantity
+        if self.water_available < self.shelter.total_capacity_of_people:
+            self.updateWaterNeeded( self.total_capacity_of_people - self.water_available)
         self.save()
 
     def __unicode__(self):
-        return "Stocks for" + self.shelter.name
+        return "Stocks for " + self.shelter.name + str(self.food_packets_needed)
 
 class Families(models.Model):
     last_name = models.CharField(max_length=30)
@@ -290,23 +312,28 @@ class SupplierLogs(models.Model):
 
 class AllocationToFamilies(TimeStampedModel):
     family = models.ForeignKey(Families)
+    shelter = models.ForeignKey(Shelter)
     given_food_packets_count = models.IntegerField(default=0)
     given_bedding_packets_count = models.IntegerField(default=0)
     given_firstaid_packets_count = models.IntegerField(default=0)
     given_water_packets_count = models.IntegerField(default=0)
 
-    def updateOrCreateFood(self,created,count):
+    def updateOrCreateFood(self,created,count,shelter):
         self.given_food_packets_count = self.given_food_packets_count + count
+        # Stocks.objects.get(shelter = shelter).updateFoodPacketsAvailable(-count)
         self.save()
 
-    def updateOrCreateBedding(self,created,count):
+    def updateOrCreateBedding(self,created,count,shelter):
         self.given_bedding_packets_count = self.given_bedding_packets_count + count
+        Stocks.objects.get(shelter = shelter).updateBeddingPacketsAvailable(-count)
         self.save()
 
-    def updateOrCreateFirstAid(self,created,count):
+    def updateOrCreateFirstAid(self,created,count,shelter):
         self.given_firstaid_packets_count = self.given_firstaid_packets_count + count
+        Stocks.objects.get(shelter = shelter).updateFirstAidPacketsAvailable(-count)
         self.save()
 
-    def updateOrCreateWater(self,created,count):
+    def updateOrCreateWater(self,created,count,shelter):
         self.given_water_packets_count = self.given_water_packets_count + count
+        Stocks.objects.get(shelter = shelter).updateWaterAvailable(-count)
         self.save()

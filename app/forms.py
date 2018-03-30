@@ -37,7 +37,7 @@ class CivilianRegistrationForm(forms.Form):
         self.fields['family_id']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
                 'title':'Family ID',
-                'class':'form-control' 
+                'class':'form-control'
             }),
             required=False,
         )
@@ -305,3 +305,93 @@ class LoginForm(forms.Form):
             raise forms.ValidationError("Invalid Login")
 
         return cleaned_data
+
+class ShelterRegistrationForm(forms.Form):
+        def __init__(self,*args,**kwargs):
+            self.shelter=kwargs.pop('shelter',None)
+            super(ShelterRegistrationForm,self).__init__(*args,**kwargs)
+            self.fields['name']=forms.CharField(
+                widget=forms.TextInput(attrs={
+                    'title':'Name',
+                    'class':'form-control'
+                }),
+                required=True,
+            )
+            self.fields['total_capacity_of_people']=forms.IntegerField(
+                widget=forms.NumberInput(attrs={
+                    'title':'Total Capacity Of People',
+                    'class':'form-control'
+                }),
+                required=True,
+            )
+            self.fields['shelter_latitude']=forms.FloatField(
+                widget=forms.NumberInput(attrs={
+                    'title':'Latitude',
+                    'class':'form-control'
+                }),
+                required=True,
+            )
+            self.fields['shelter_longitude']=forms.FloatField(
+                widget=forms.NumberInput(attrs={
+                    'title':'Longitude',
+                    'class':'form-control'
+                }),
+                required=True,
+            )
+
+class SupplierForm(forms.Form):
+
+    def __init__(self,*args,**kwargs):
+        self.supplier=kwargs.pop('supplier',None)
+        super(SupplierForm,self).__init__(*args,**kwargs)
+        self.fields['food_count']=forms.IntegerField(
+            widget=forms.NumberInput(attrs={
+                'title':'Aadhar Number',
+                'class':'form-control'
+            }),
+            required=False,
+        )
+        self.fields['first_aid_count']=forms.IntegerField(
+            widget=forms.NumberInput(attrs={
+                'title':'First Aid',
+                'class':'form-control'
+            }),
+            required=False,
+        )
+        self.fields['bedding_count']=forms.IntegerField(
+            widget=forms.NumberInput(attrs={
+                'title':'Bedding',
+                'class':'form-control'
+            }),
+            required=False,
+        )
+        self.fields['water_count']=forms.IntegerField(
+            widget=forms.NumberInput(attrs={
+                'title':'Water',
+                'class':'form-control'
+            }),
+            required=False,
+        )
+
+        def clean(self):
+            cleaned_data = super(SupplierForm, self).clean()
+            try:
+                food_count = cleaned_data.get("food_count")
+            except ObjectDoesNotExist:
+                pass
+            try:
+                first_aid_count = cleaned_data.get("first_aid_count")
+            except ObjectDoesNotExist:
+                pass
+            try:
+                bedding_count = cleaned_data.get("bedding_count")
+            except ObjectDoesNotExist:
+                pass
+            try:
+                water_count = cleaned_data.get("water_count")
+            except ObjectDoesNotExist:
+                pass
+            if (food_count is None) and (first_aid_count is None) and (bedding_count is None) and (water_count is None):
+                raise forms.ValidationError("Invalid Login")
+
+            return cleaned_data

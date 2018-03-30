@@ -14,7 +14,7 @@ SECRET_KEY = '(gj8%nt2=@now&sg!9z$_9i2a%17@nz+8=4ekv%94^hboqs7zc'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['139.59.63.61','localhost',]
+ALLOWED_HOSTS = ['139.59.63.61','localhost','172.16.71.211','172.16.70.157']
 
 AUTH_USER_MODEL = 'app.SystemUsers'
 

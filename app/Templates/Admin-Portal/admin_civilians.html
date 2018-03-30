@@ -40,7 +40,7 @@
                                                         <td>
                                                             {{ civ.contact }}
                                                         </td>
-                                                        
+
                                                         <td>
                                                             {{ civ.aadhar_number }}
                                                         </td>
@@ -50,7 +50,7 @@
 
                                                     </tr>
                                                     {% endfor %}
-                                                    
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -58,8 +58,8 @@
                                 </div>
                             </div>
                             <!-- /# column -->
-                        </div>
-                    </section>
+                      </div>
+                  </section>
             </div>
         </div>
 {% endblock %}
@@ -79,7 +79,7 @@
     <script src="{% static "js/lib/owl-carousel/owl.carousel.min.js" %}"></script>
     <script src="{% static "js/lib/owl-carousel/owl.carousel-init.js" %}"></script>
     <script src="{% static "js/scripts.js" %}"></script>
-    {% for civ in civilian_list %} 
+    {% for civ in civilian_list %}
         <script type="text/javascript">
           var water = '{{civ.first_name|safe}}';
           console.log(water);

@@ -25,53 +25,70 @@ from googleplaces import GooglePlaces, types, lang
 from rest_framework.response import Response
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.serializers import serialize
-
+import googlemaps
 from django.forms.formsets import formset_factory
+from django.db.models import Sum
 
 logging.basicConfig(level=logging.INFO)
 logger=logging.getLogger(__name__)
 
-class GooglePlacesApi(View):
-    google_places = GooglePlaces('AIzaSyBsnNYNER3BH8prMsgFPZ4-mZrjeT2kC5w')
-
-    def get(self, request, *args, **kwargs):
-
-        self.getNearbyHospitals("London","USA")
-        return HttpResponse("Done!!!!!")
-
-    def getNearbyHospitals(self, latitude, longitude):
-        # query_result = google_places.nearby_search(
-        # location=''+latitude+','+longitude, keyword='hosital',
-        # radius=20000, types=[types.TYPE_FOOD])
-        query_result_type_hospital = self.google_places.nearby_search(location=''+latitude+longitude, keyword='hosital', radius=20000, types='hospital')
-        query_result_type_health = self.google_places.nearby_search(location=''+latitude+longitude, keyword='hosital',radius=20000, types='health')
-        # Supported types :https://developers.google.com/places/web-service/supported_types
-        print "11111111111111111111111111111111111111111"
-        testQuery(query_result_type_hospital)
-        print "22222222222222222222222222222222222222222"
-        testQuery(query_result_type_health)
-        print "33333333333333333333333333333333333333333"
-
-
-    def testQuery(query_result):
-        if query_result.has_attributions:
-            print query_result.html_attributions
-
-        for place in query_result.places:
-            # Returned *1 page* of places from a query are place summaries.
-            print place.name
-            print place.geo_location
-            print place.place_id
-
-            place.get_details()
-            # Referencing any of the attributes below, prior to making a call to
-            # get_details() will raise a googleplaces.GooglePlacesAttributeError.
-            print place.details # A dict matching the JSON response from Google.
-            print place.local_phone_number
-            print place.international_phone_number
-            print place.website
-            print place.url
-
+# class GooglePlacesApi(View):
+#     gmaps = googlemaps.Client(key='AIzaSyA8qHwF1krHNFP0N8A4gZEnyLLSvO9iPcw')
+#
+#     def get(self, request, *args, **kwargs):
+#
+#         query_result = self.getNearbyHospitals("London","USA")
+#         data = []
+#         if query_result.has_attributions:
+#             print query_result.html_attributions
+#
+#         for place in query_result.places:
+#             # Returned *1 page* of places from a query are place summaries.
+#             data['name'] = place.name
+#             data['loc'] = place.geo_location
+#             data['id'] = place.place_id
+#
+#             place.get_details()
+#             # Referencing any of the attributes below, prior to making a call to
+#             # get_details() will raise a googleplaces.GooglePlacesAttributeError.
+#             data['details'] =place.details # A dict matching the JSON response from Google.
+#             data['num'] = place.local_phone_number
+#             print place.international_phone_number
+#             data['website'] = place.website
+#             data['url'] = place.url
+#
+#         return HttpResponse(data)
+#
+#
+#     def testQuery(query_result):
+#         if query_result.has_attributions:
+#             print query_result.html_attributions
+#
+#         for place in query_result.places:
+#             # Returned *1 page* of places from a query are place summaries.
+#             print place.name
+#             print place.geo_location
+#             print place.place_id
+#
+#             place.get_details()
+#             # Referencing any of the attributes below, prior to making a call to
+#             # get_details() will raise a googleplaces.GooglePlacesAttributeError.
+#             print place.details # A dict matching the JSON response from Google.
+#             print place.local_phone_number
+#             print place.international_phone_number
+#             print place.website
+#             print place.url
+#
+#
+#     def getNearbyHospitals(self, latitude, longitude):
+#         geocode_result = self.gmaps.geocode({latitude,longitude})
+#         location_ = geocode_result[0]['geometry']['location']
+#
+#         # query_result = google_places.nearby_search(
+#         # location=''+latitude+','+longitude, keyword='hosital',
+#         # radius=20000, types=[types.TYPE_FOOD])
+#         # query_result_type_hospital = self.gmaps.places(location=''+latitude+','+longitude,  radius=20000, types='hospital')
+#         return query_result_type_health = self.gmaps.places_nearby(location=location_,keyword = 'health',rank_by='distance',type='hospital')
 
 class AdminHome(ListView):
     template_name = 'Admin-Portal/admin_home.html'
@@ -92,7 +109,8 @@ class AdminShelter(DetailView):
     def get_context_data(self, **kwargs):
 
         context = super(AdminShelter, self).get_context_data(**kwargs)
-        context["Civilians"] = Civilians.objects.filter(current_shelter=Shelter.objects.get(id=self.kwargs.get('pk')))
+        context["civilian_list1"] = Civilians.objects.filter(current_shelter=Shelter.objects.get(id=self.kwargs.get('pk')))
+        context["civilian_list2"] = Civilians.objects.filter(assigned_shelter=Shelter.objects.get(id=self.kwargs.get('pk')))
         context["Officials"] = SystemUsers.objects.filter(shelter=Shelter.objects.get(id=self.kwargs.get('pk')),user_role='o')
         context["Supplier"] = SystemUsers.objects.filter(shelter=Shelter.objects.get(id=self.kwargs.get('pk')),user_role='s')
         context["Stock"] = Stocks.objects.filter(shelter=Shelter.objects.get(id=self.kwargs.get('pk')))
@@ -269,7 +287,6 @@ class CivilianUpdateShelterDetailView(DetailView):
         civilian.updateAssignedShelter(Shelter.objects.get(id=shelter_id))
         return redirect('shelter-updated-successfully') ##TODO update final redirect
 
-
 class RegisterAtShelterFormView(FormView):
     template_name = "Official-Portal/register_at_shelter.html"
     form_class = CivilianAtShelterForm
@@ -295,6 +312,10 @@ class RegisterAtShelterFormView(FormView):
             except ObjectDoesNotExist:
                 civilian = Civilians.objects.get(contact=register_at_shelter_form.cleaned_data.get('mobile_number'))
             civilian.updateCurrentShelter(request.user.shelter)
+            current_shelter = request.user.shelter
+            current_shelter.updateOccupiedCapacity(1)
+            assigned_shelter = civilian.assigned_shelter
+            assigned_shelter.updateExpectedCapacity(-1)
             return self.form_valid(register_at_shelter_form, system_user)
 
     def form_valid(self, form, form_object):
@@ -319,7 +340,6 @@ class AllocationAtShelterFormView(FormView):
         context["shelter"] = Shelter.objects.get(id=self.kwargs.get('pk'))
         context['form']=form
         context['time']=timezone.now()
-        print context
         return context
 
     def post(self, request, *args, **kwargs):
@@ -330,7 +350,8 @@ class AllocationAtShelterFormView(FormView):
             except ObjectDoesNotExist:
                 civilian = Civilians.objects.get(contact=allocate_at_shelter_form.cleaned_data.get('mobile_number'))
             # get or create on AllocationToFamilies for civilian.family
-            allocation_to_family, created = AllocationToFamilies.objects.get_or_create(family=civilian.family)
+            print(request.user.shelter)
+            allocation_to_family, created = AllocationToFamilies.objects.get_or_create(family=civilian.family,shelter=request.user.shelter)
 
             length = len(request.get_full_path().split("/"))
             allocation_to_be_done = request.get_full_path().split("/")[length-2]
@@ -338,18 +359,162 @@ class AllocationAtShelterFormView(FormView):
             count = allocate_at_shelter_form.cleaned_data.get('count')
 
             if allocation_to_be_done == 'food':
-                allocation_to_family.updateOrCreateFood(created,count)
+                allocation_to_family.updateOrCreateFood(created,count,request.user.shelter)
             elif allocation_to_be_done == 'bedding':
-                allocation_to_family.updateOrCreateBedding(created,count)
+                allocation_to_family.updateOrCreateBedding(created,count,request.user.shelter)
             elif allocation_to_be_done == 'firstaid':
-                allocation_to_family.updateOrCreateFirstAid(created,count)
+                allocation_to_family.updateOrCreateFirstAid(created,count,request.user.shelter)
             elif allocation_to_be_done == 'water':
-                allocation_to_family.updateOrCreateWater(created,count)
+                allocation_to_family.updateOrCreateWater(created,count,request.user.shelter)
             return self.form_valid(allocate_at_shelter_form, system_user)
 
     def form_valid(self, form, form_object):
         # Additional system user registration functionaity here (Maybe an Email??)
         return super(AllocationAtShelterFormView, self).form_valid(form, form_object)
+
+class ShelterRegistrationFormView(FormView):
+    template_name = "shelter_register.html"
+    form_class = ShelterRegistrationForm
+    success_url = "/shelter-register/"
+
+    def get_form_kwargs(self):
+        logger.info('called get form kwargs')
+        kwargs=super(ShelterRegistrationFormView,self).get_form_kwargs()
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        logger.info('called get context')
+        context=super(ShelterRegistrationFormView,self).get_context_data()
+        form=self.get_form(self.form_class)
+        context['form']=form
+        context['time']=timezone.now()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        shelter_registration_form= ShelterRegistrationForm(request.POST)
+        if shelter_registration_form.is_valid():
+            Shelter().create(shelter_registration_form)
+            return self.form_valid(shelter_registration_form)
+
+    def form_valid(self, form):
+        # Additional system user registration functionaity here (Maybe an Email??)
+        return super(ShelterRegistrationFormView, self).form_valid(form)
+
+class SupplierFormView(FormView):
+    template_name = "supplier_form.html"
+    form_class = SupplierForm
+    success_url = "/supply-made/"
+
+    def get_form_kwargs(self):
+        logger.info('called get form kwargs')
+        kwargs=super(SupplierFormView,self).get_form_kwargs()
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        logger.info('called get context')
+        context=super(SupplierFormView,self).get_context_data()
+        form=self.get_form(self.form_class)
+        context['form']=form
+        context['time']=timezone.now()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        supplier_form= SupplierForm(request.POST)
+        if supplier_form.is_valid():
+            try:
+                food_count = supplier_form.cleaned_data.get('food_count')
+                food_required_count = Stocks.objects.aggregate(Sum('food_packets_needed'))
+                food_requirement_dict = {}
+                for shelter in Shelter.objects.all():
+                    try:
+                        obj = Stocks.objects.get(shelter=shelter)
+                        food_requirement_dict[''+obj.shelter.name] = obj.food_packets_needed
+                    except ObjectDoesNotExist:
+                        pass
+                food_allocation = self.getWeightedDict(food_requirement_dict,food_count)
+                for key,value in food_allocation:
+                    shelter = Shelter.objects.get(name=key)
+                    stock_obj = Stocks.objects.get(shelter=shelter)
+                    stock_obj.updateFoodPacketsNeeded(-value)
+                    stock_obj.updateFoodPacketsAvailable(value)
+            except ObjectDoesNotExist:
+                pass
+            try:
+                first_aid_count = supplier_form.cleaned_data.get('first_aid_count')
+                first_aid_required_count = Stocks.objects.aggregate(Sum('first_aid_packets_needed'))
+                first_aid_requirement_dict = {}
+                for shelter in Shelter.objects.all():
+                    try:
+                        obj = Stocks.objects.get(shelter=shelter)
+                        first_aid_requirement_dict[''+obj.shelter.name] = obj.first_aid_packets_needed
+                    except ObjectDoesNotExist:
+                        pass
+                first_aid_allocation = self.getWeightedDict(first_aid_requirement_dict,food_count)
+                for key,value in first_aid_allocation:
+                    shelter = Shelter.objects.get(name=key)
+                    stock_obj = Stocks.objects.get(shelter=shelter)
+                    stock_obj.updateFirstAidPacketsNeeded(-value)
+                    stock_obj.updateFirstAidPacketsAvailable(value)
+            except ObjectDoesNotExist:
+                pass
+            try:
+                bedding_count = supplier_form.cleaned_data.get('bedding_count')
+                bedding_required_count = Stocks.objects.aggregate(Sum('bedding_packets_needed'))
+                bedding_requirement_dict = {}
+                for shelter in Shelter.objects.all():
+                    try:
+                        obj = Stocks.objects.get(shelter=shelter)
+                        bedding_requirement_dict[''+obj.shelter.name] = obj.bedding_packets_needed
+                    except ObjectDoesNotExist:
+                        pass
+                bedding_allocation = self.getWeightedDict(bedding_requirement_dict,bedding_count)
+                for key,value in bedding_allocation:
+                    shelter = Shelter.objects.get(name=key)
+                    stock_obj = Stocks.objects.get(shelter=shelter)
+                    stock_obj.updateBeddingPacketsNeeded(-value)
+                    stock_obj.updateBeddingPacketsAvailable(value)
+            except ObjectDoesNotExist:
+                pass
+            try:
+                water_count = supplier_form.cleaned_data.get('water_count')
+                water_required_count = Stocks.objects.aggregate(Sum('water_needed'))
+                water_requirement_dict = {}
+                for shelter in Shelter.objects.all():
+                    try:
+                        obj = Stocks.objects.get(shelter=shelter)
+                        water_requirement_dict[''+obj.shelter.name] = obj.water_needed
+                    except ObjectDoesNotExist:
+                        pass
+                water_allocation = self.getWeightedDict(water_requirement_dict,water_count)
+                for key,value in water_allocation:
+                    shelter = Shelter.objects.get(name=key)
+                    stock_obj = Stocks.objects.get(shelter=shelter)
+                    stock_obj.updateWaterNeeded(-value)
+                    stock_obj.updateWaterAvailable(value)
+            except ObjectDoesNotExist:
+                pass
+
+            return self.form_valid(supplier_form)
+
+    def form_valid(self, form):
+        # Additional system user registration functionaity here (Maybe an Email??)
+        return super(SupplierFormView, self).form_valid(form)
+
+    def tsp(self,source):
+
+        shelters = Shelter.objects.all()
+        # for shelter in shelters:
+        #     shelter = BlockDictComputation().get_nearest_shelter(source.block.x, source.block.y)
+        return [shelters]
+
+    def getWeightedDict(self,shelter_dict,distribution_value):
+        total = 0.0
+        for shelter,value in shelter_dict.iteritems():
+            total = total + value
+        weighted_dict = {}
+        for shelter,value in shelter_dict.iteritems():
+            weighted_dict[shelter] = math.floor(distribution_value*value/total)
+        return weighted_dict
 
 class Globals():
     response = {}
@@ -363,6 +528,17 @@ class Globals():
     degree_to_km = 120
     a_minute_to_km = 2
     block_side = 2
+    start_x = 0
+    start_y = 0
+    temp_blocks = BlocksData.objects.all()
+    temp_x = 0
+    for block in temp_blocks:
+        if block.x < temp_x:
+            break
+        else:
+            temp_x = block.x
+    end_x = temp_x
+    end_y = (temp_blocks.count())/end_x
 
     def manhattan_distance(self, sx, sy, ex, ey):
         return abs(ex - sx) + abs(ey - sy)
@@ -455,13 +631,72 @@ class ExecuteDRAP(View):
             assignShelter(civilian)
         return
 
-    def assignShelter(civilian):
-        block_of_civilian = civilian.block
-        assigned_shelter = BlocksDict.object.get(block = block_of_civilian).shelter
-        civilian.updateAssignedShelter(assigned_shelter)
-        message = ""
-        Alert().alertForShelterAssigning(civilian,assigned_shelter,message)
+    def getNextRadialShelter(self,block_of_civilian,assigned_shelter):
+        dist = []
+        if block_of_civilian.y is not Globals().end_y:
+            t_block = BlocksData(x = block_of_civilian.x, y = ((block_of_civilian.y) + 1) )
+            t_shelter = BlocksDict.objects.get(block = t_block).shelter
+            dist[0] = Globals().manhattan_distance(t_shelter.block.x, t_shelter.block.y, t_block.x, t_block.y )
 
+        if block_of_civilian.y is not Globals().start_y:
+            b_block = BlocksData(x = block_of_civilian.x, y = ((block_of_civilian.y) - 1) )
+            b_shelter = BlocksDict.objects.get(block = b_block).shelter
+            dist[1] = Globals().manhattan_distance(b_shelter.block.x, b_shelter.block.y, b_block.x, b_block.y )
+
+        if block_of_civilian.x is not Globals().start_x:
+            l_block = BlocksData(x = ((block_of_civilian.x) - 1), y = block_of_civilian.y )
+            l_shelter = BlocksDict.objects.get(block = l_block).shelter
+            dist[2] = Globals().manhattan_distance(l_shelter.block.x, l_shelter.block.y, l_block.x, l_block.y )
+
+        if block_of_civilian.x is not Globals().end_x:
+            r_block = BlocksData(x = ((block_of_civilian.x) + 1), y = block_of_civilian.y )
+            r_shelter = BlocksDict.objects.get(block = r_block).shelter
+            dist[3] = Globals().manhattan_distance(r_shelter.block.x, r_shelter.block.y, r_block.x, r_block.y )
+
+        minimum_dist = 100000
+        for i in range(len(dist)):
+            if minimum_dist <= dist[i]:
+                minimum_dist = dist[i]
+                if i == 0:
+                    assigned_shelter = t_shelter
+                elif i == 1:
+                    assigned_shelter = b_shelter
+                elif i == 2:
+                    assigned_shelter = l_shelter
+                else:
+                    assigned_shelter = r_shelter
+        return assigned_shelter
+
+    def assignShelter(civilian):
+        # TODO: Add assisting people count
+        if civilian.assigned_shelter is not None:
+            threshold = 0.9
+            block_of_civilian = civilian.block
+            to_be_assigned_shelter = BlocksDict.object.get(block = block_of_civilian).shelter
+            if to_be_assigned_shelter.is_full:
+                to_be_assigned_shelter = self.getNextRadialShelter(block_of_civilian,to_be_assigned_shelter)
+            else:
+                civilian.updateAssignedShelter(to_be_assigned_shelter)
+                if float((to_be_assigned_shelter.capacity_occupied + to_be_assigned_shelter.expected_capacity)/(to_be_assigned_shelter.total_capacity_of_people)) > threshold:
+                    to_be_assigned_shelter.updateIsFull(True)
+
+            message = ""
+            Alert().alertForShelterAssigning(civilian,to_be_assigned_shelter,message)
+            assignShelter(civilian)
+        else:
+            return
+
+
+class test(View):
+
+    def get(self,request,*args,**kwargs):
+        # print request.POST.get('device_id')
+        devices = FCMDevice.objects.all()
+        devices.send_message(title="Title", body="Message")
+        devices.send_message(title="Title", body="Message", data={"test": "test"})
+        devices.send_message(data={"test": "test"})
+        print("sent")
+        return HttpResponse(json.dumps({"a":1,"b":2}))
 # class Notifications():
 #     def notify(devices,message):
 #         devices.send_message(title="NotificationTitle", body=""+message)
@@ -493,19 +728,18 @@ class ShelterViewSet(viewsets.ModelViewSet):
     queryset = Shelter.objects.all()
     serializer_class = ShelterSerializer
 
-def getShelters(request):
-    body_unicode = request.body.decode('utf-8')
-    request_data = json.loads(body_unicode)
+class GetShelters(View):
 
-    latitude = request_data.get('latitude')
-    longitude = request_data.get('longitude')
+    def post(self,request,*args,**kwargs):
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
 
-    block = BlocksData().get_block(latitude,longitude)
-    if block.in_disaster == True:
-        nearest_block = BlocksDict.objects.get(block = block).shelter
-        serialized_block = serialize('json', [nearest_block])
-        return JsonResponse({'success': True, 'data': json.loads(serialized_block)})
-    else :
+        block = BlocksData().get_block(latitude,longitude)
+    # if block.in_disaster == True:
+    #     nearest_block = BlocksDict.objects.get(block = block).shelter
+    #     serialized_block = serialize('json', [nearest_block])
+    #     return JsonResponse({'success': True, 'data': json.loads(serialized_block)})
+    # else :
         j=0
         shelters = Shelter.objects.all()
         shelter_dict = {}
@@ -518,6 +752,38 @@ def getShelters(request):
         #sorted_shelters = {'asd':sorted_shelters}
         serialized_sorted_shelters = serialize('json',sorted_shelters)
         return JsonResponse({'success': True, 'data': json.loads(serialized_sorted_shelters)})
+
+class AddAdHoc(View):
+
+    def post(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        request_data = json.loads(body_unicode)
+
+        shelter = Shelter.create(request.POST)
+
+        response_data = {}
+        response_data['name'] = request.POST.get('name')
+        response_data['total_capacity_of_people'] = request.POST.get('total_capacity_of_people')
+        response_data['shelter_latitude'] = request.POST.get('shelter_latitude')
+        response_data['shelter_longitude'] = request.POST.get('shelter_longitude')
+
+        return JsonResponse({'success': True, 'data': json.loads(response_data)})
+
+class GetCivilianData(View):
+    def post(self, request, *args, **kwargs):
+        aadhar_valid = True
+        phone_valid = True
+        try:
+            civilian = Civilians.objects.get(aadhar_number = request.POST.get('aadhar_number'))
+        except ObjectDoesNotExist:
+            aadhar_valid = False
+            try:
+                civilian = Civilians.objects.get(contact = request.POST.get('contact'))
+            except ObjectDoesNotExist:
+                    phone_valid = False
+        if not aadhar_valid and not phone_valid:
+                return JsonResponse({'success': False})
+        return JsonResponse({'success': True, 'data':json.loads(serialize('json',[civilian]))})
 
 '''
 API's end here
@@ -542,7 +808,7 @@ class MessageHandler(View):
             Alert().alertForShelterAssigning(civilian,shelter,new_message)
 
     def post(self,request,*args,**kwargs):
-        sender = request.POST.get('number').strip()
+        sender = request.POST.get('number')[3:].strip()
         message = request.POST.get('message').strip()
         civilian = Civilians.objects.get(aadhar_number = request.POST.get('aadhar_number'))
 
@@ -550,13 +816,11 @@ class MessageHandler(View):
             message = re.sub('[\s+]', '', message[4:])
             shelterAllocator(sender,message,civilian)
 
+class UserLogout(View):
 
-def userLogout(request):
-    if request.user.is_authenticated():
+    def get(self, request, *args, **kwargs):
         logout(request)
         return redirect('../login/')
-    else:
-        return HttpResponseRedirect('../login/')
 
 # def DemandSupply():
     # fetch available with self

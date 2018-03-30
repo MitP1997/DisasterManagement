@@ -53,14 +53,15 @@
 
 	var plot = $.plot( "#cpu-load", [ getRandomData() ], {
 		series: {
-			shadowSize: 0 // Drawing is faster without shadows
+			shadowSize: 2 // Drawing is faster without shadows
 		},
 		yaxis: {
 			min: 0,
 			max: 100
 		},
 		xaxis: {
-			show: false
+			show: true,
+			 tickLength: 50
 		},
 		colors: [ "#007BFF" ],
 		grid: {

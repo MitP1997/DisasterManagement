@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^', include(router.urls, namespace="app")),
     url(r'^api-auth/', include('rest_framework.urls', namespace='app')),
 
-    url(r'google-places/$',GooglePlacesApi.as_view(),name='google-places'),
+    # url(r'google-places/$',GooglePlacesApi.as_view(),name='google-places'),
 
     #url(r'^register-family/', Civilian().registerFamily),
     url(r'civilian-register/',CivilianRegistrationFormView.as_view(),name='civilian_register'),
@@ -30,6 +30,8 @@ urlpatterns = [
     url(r'^admin-civilians/$', user_is_admin(login_required(AdminCivilians.as_view())), name='civilian-home'),
     url(r'^admin-shelter/(?P<pk>\d+)/$', user_is_admin(login_required(AdminShelter.as_view())), name='shelter-details-admin'),
 
+    url(r'^shelter-register/$', user_is_admin(login_required(ShelterRegistrationFormView.as_view())), name='shelter-register'),
+
     url(r'^official-civilians/(?P<pk>\d+)/$', user_is_operator(login_required(OfficialCivilians.as_view())), name='civilian-shelter'),
     url(r'^official-home/(?P<pk>\d+)/$', user_is_operator(login_required(OfficialShelter.as_view())), name='shelter-details-official'),
     url(r'^official-add-civilian/(?P<pk>\d+)/$', user_is_operator(login_required(RegisterAtShelterFormView.as_view())), name='civilian-register-shelter'),
@@ -38,9 +40,14 @@ urlpatterns = [
     url(r'make-blocks/',PreDRAPComputation.as_view(),name='pre_drap_comp'),
     url(r'compute-block-dict/',BlockDictComputation.as_view(),name='compute_block_dict'),
 
-    url(r'message-receiver/',MessageHandler.as_view(),name='message_handler'),
+    url(r'message-receiver/',csrf_exempt(MessageHandler.as_view()),name='message_handler'),
 
-    url(r'get-shelters/',csrf_exempt(views.getShelters),name='get_shelters'),
+    url(r'get-shelters/',csrf_exempt(GetShelters.as_view()),name='get_shelters'),
+    url(r'add-adhoc/',csrf_exempt(AddAdHoc.as_view()),name='add_adhoc'),
+    url(r'get-civilian-data/',csrf_exempt(GetCivilianData.as_view()),name='get_civilian_data'),
 
-    url(r'logout/',views.userLogout,name='logout'),
+    url(r'supplier-home/',user_is_supplier(login_required(SupplierFormView.as_view())),name='supply_home'),
+
+    url(r'logout/',login_required(UserLogout.as_view()),name='logout'),
+    url(r'fcm_insert/',csrf_exempt(test.as_view())),
 ]
