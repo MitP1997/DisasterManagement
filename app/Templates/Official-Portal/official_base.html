@@ -1,0 +1,209 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Smart India Project</title>
+
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+
+    <!-- Styles -->
+    <link href="{% static "css/lib/font-awesome.min.css" %}" rel="stylesheet">
+    <link href="{% static "css/lib/themify-icons.css" %}" rel="stylesheet">
+    <link href="{% static "css/lib/menubar/sidebar.css" %}" rel="stylesheet">
+    <link href="{% static "css/lib/bootstrap.min.css" %}" rel="stylesheet">
+    
+    <link href="{% static "css/lib/helper.css" %}" rel="stylesheet">
+    <link href="{% static "css/style.css" %}" rel="stylesheet">
+      <style type="text/css">
+        .skiptranslate, .goog-te-spinner-pos{
+          display: none;
+        }
+        .skiptranslate.goog-te-gadget{
+          display: inherit!important;
+        }
+        body{
+          top:0!important;
+        }
+      </style>
+    {% block css %}
+    {% endblock %}
+  </head>
+
+  <body>
+
+
+    <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
+      <div class="nano">
+        <div class="nano-content">
+          <div class="logo"><a href="index.html"><!-- <img src="{% static "/images/logo.png" alt="" /> --><span>NDMP</span></a></div>
+          <ul>
+            <li><a href="/official-home/{{ shelter.id }}"><i class="ti-home"></i>My Shelter</a></li>
+            <li><a class="sidebar-sub-toggle"><i class="ti-home"></i>  Allocation Of resources  <span class="sidebar-collapse-icon ti-angle-down"></span></a>
+              <ul>
+                  <li><a href="/allocate-at-shelter/{{ shelter.id }}/food">Food</a></li>
+                  <li><a href="/allocate-at-shelter/{{ shelter.id }}/firstaid">First Aid</a></li>
+                  <li><a href="/allocate-at-shelter/{{ shelter.id }}/bedding">Bedding</a></li>
+                  <li><a href="/allocate-at-shelter/{{ shelter.id }}/water">Water</a></li>
+              </ul>
+            </li>
+            
+            </li>
+            <li><a href="/official-civilians/{{ shelter.id }}"><i class="ti-user"></i> Civilians </a></li>
+            <li><a href='/logout/'><i class="ti-close"></i> Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /# sidebar -->
+
+
+    <div class="header">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="float-left">
+              <div class="hamburger sidebar-toggle">
+                <span class="line"></span>
+                <span class="line"></span>
+                <span class="line"></span>
+              </div>
+            </div>
+            <div class="float-right">
+              <ul>
+
+                <li class=" dib">
+                    <div id="google_translate_element"></div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-wrap">
+    {% block content %}
+    {% endblock %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="footer">
+                <p>2018 © Admin Board. - <a href="#">example.com</a></p>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- jquery vendor -->
+    <script src="{% static "js/lib/jquery.min.js" %}"></script>
+    <script src="{% static "js/lib/jquery.nanoscroller.min.js" %}"></script>
+    <!-- nano scroller -->
+    <script src="{% static "js/lib/menubar/sidebar.js" %}"></script>
+    <script src="{% static "js/lib/preloader/pace.min.js" %}"></script>
+    <!-- sidebar -->
+    <script src="{% static "js/lib/bootstrap.min.js" %}"></script>
+    <!-- bootstrap -->
+<!-- 
+    <script src="{% static "js/lib/morris-chart/raphael-min.js" %}"></script>
+    <script src="{% static "js/lib/morris-chart/morris.js" %}"></script>
+    <script src="{% static "js/lib/morris-chart/morris-init.js" %}"></script> -->
+
+       
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+          new google.translate.TranslateElement({pageLanguage: 'bn', includedLanguages: 'bn,en,hi,ml,ta,te'}, 'google_translate_element');
+        }
+    </script>
+
+    <script type="text/javascript">
+        (function() {
+          var gtConstEvalStartTime = new Date();
+
+          function d(b) {
+              var a = document.getElementsByTagName("head")[0];
+              console.log(a);
+              a || (a = document.body.parentNode.appendChild(document.createElement("head")));
+              a.appendChild(b)
+          }
+
+          function _loadJs(b) {
+              var a = document.createElement("script");
+              a.type = "text/javascript";
+              a.charset = "UTF-8";
+              a.src = b;
+              d(a)
+          }
+
+          function _loadCss(b) {
+              var a = document.createElement("link");
+              a.type = "text/css";
+              a.rel = "stylesheet";
+              a.charset = "UTF-8";
+              a.href = b;
+              d(a)
+          }
+
+          function _isNS(b) {
+              b = b.split(".");
+              for (var a = window, c = 0; c < b.length; ++c)
+                  if (!(a = a[b[c]])) return !1;
+              return !0
+          }
+
+          function _setupNS(b) {
+              b = b.split(".");
+              for (var a = window, c = 0; c < b.length; ++c) a.hasOwnProperty ? a.hasOwnProperty(b[c]) ? a = a[b[c]] : a = a[b[c]] = {} : a = a[b[c]] || (a[b[c]] = {});
+              return a
+          }
+          window.addEventListener && "undefined" == typeof document.readyState && window.addEventListener("DOMContentLoaded", function() {
+              document.readyState = "complete"
+          }, !1);
+          if (_isNS('google.translate.Element')) {
+              return
+          }(function() {
+              var c = _setupNS('google.translate._const');
+              c._cest = gtConstEvalStartTime;
+              gtConstEvalStartTime = undefined;
+              c._cl = 'en';
+              c._cuc = 'googleTranslateElementInit';
+              c._cac = '';
+              c._cam = '';
+              c._ctkk = eval('((function(){var a\x3d2005680396;var b\x3d810020918;return 422884+\x27.\x27+(a+b)})())');
+              var h = 'translate.googleapis.com';
+              var s = (true ? 'https' : window.location.protocol == 'https:' ? 'https' : 'http') + '://';
+              var b = s + h;
+              c._pah = h;
+              c._pas = s;
+              // c._pbi = b + '/translate_static/img/te_bk.gif';
+              // c._pci = b + '/translate_static/img/te_ctrl3.gif';
+              // c._pli = b + '/translate_static/img/loading.gif';
+              c._plla = h + '/translate_a/l';
+              // c._pmi = b + '/translate_static/img/mini_google.png';
+              // c._ps = b + '/translate_static/css/translateelement.css';
+              c._puh = 'translate.google.com';
+              // _loadCss(c._ps);
+              _loadJs(b + '/translate_static/js/element/main.js');
+          })();
+        })();
+    </script>
+    <script src="{% static "js/scripts.js" %}"></script>
+    <!-- scripit init-->
+    {% block js %}
+    {% endblock %}
+  </body>
+
+</html>

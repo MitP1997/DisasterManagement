@@ -1,0 +1,263 @@
+    {% extends './admin_base.html' %}
+{% load staticfiles %}
+
+        <!-- Styles -->
+{% block css %}
+    <link href="{% static "css/lib/weather-icons.css" %}" rel="stylesheet" />
+    <link href="{% static "css/lib/owl.carousel.min.css"  %}" rel="stylesheet" />
+    <link href="{% static "css/lib/owl.theme.default.min.css" %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+        <div class="main">
+            <div class="container-fluid">
+                <!-- /# row -->
+                <section id="main-content">
+                        <div class="row">
+                            
+                            <div class="col-lg-3">
+                                <div class="card">
+                                    <div class="stat-widget-one">
+                                        <!-- <div class="stat-icon dib"><i class="ti-user color-primary border-primary"></i></div>
+                                        <div class="stat-content dib">
+                                            <div class="stat-text">Capacity</div>
+                                            <div class="stat-digit">{{ shelter.total_capacity_of_people }}</div>
+                                        </div> -->
+                                        <div class="stat-icon dib"><i class="ti-paint-bucket color-primary border-primary"></i></div>
+                                        <div class="stat-content dib">
+                                            <div class="stat-text">Water</div>
+                                           {% for Stock in Stock %}
+                                                <div class="stat-digit">{{ Stock.water_needed }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="card">
+                                    <div class="stat-widget-one">
+                                        <div class="stat-icon dib"><i class="ti-package color-warning border-warning"></i></div>
+                                        <div class="stat-content dib">
+                                            <div class="stat-text">Food Packet</div>
+                                            {% for Stock in Stock %}
+                                                <div class="stat-digit">{{ Stock.food_packets_needed }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="card">
+                                    <div class="stat-widget-one">
+                                        <div class="stat-icon dib"><i class="ti-plus color-danger border-danger"></i></div>
+                                        <div class="stat-content dib">
+                                            <div class="stat-text">First Aid Packet</div>
+                                            {% for Stock in Stock %}
+                                                <div class="stat-digit">{{ Stock.first_aid_packets_needed }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="card">
+                                    <div class="stat-widget-one">
+                                        <div class="stat-icon dib"><i class="fa fa-bed color-success border-success"></i></div>
+                                        <div class="stat-content dib">
+                                            <div class="stat-text">Beds</div>
+                                            {% for Stock in Stock %}
+                                                <div class="stat-digit">{{ Stock.bedding_packets_needed }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Graphs for capactiy and people to be added -->
+                        <div class="row">
+                            <div class="col-sm-6 col-md-4">
+                                <div class="card">
+                                    <div class="card-title">
+                                        <h4>Pie chart</h4>
+                                    </div>    
+                                    <div class="card-body">
+                                        <canvas id="pieChart"></canvas>
+                                    </div>
+                                </div>
+                              </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-title pr">
+                                        <h4>Civilians</h4>
+
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table student-data-table m-t-20">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Number</th>
+                                                        <th>Aadhar</th>
+                                                        <th>Email</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for civ in Civilians %}
+                                                    <tr>
+                                                        <td>
+                                                            {{ civ.first_name }} {{ civ.last_name }}
+                                                        </td>
+                                                        <td>
+                                                            {{ civ.contact }}
+                                                        </td>
+                                                        
+                                                        <td>
+                                                            {{ civ.aadhar_number }}
+                                                        </td>
+                                                        <td>
+                                                            {{ civ.current_shelter.id }}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /# column -->
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-title pr">
+                                        <h4>Officals</h4>
+
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table student-data-table m-t-20">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Contact</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for off in Officials %}
+                                                    <tr>
+                                                        <td>
+                                                            {{ off.username }}
+                                                        </td>
+                                                        <td>
+                                                            {{ off.contact }}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card">
+                                    <div class="card-title pr">
+                                        <h4>Suppliers</h4>
+
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table student-data-table m-t-20">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Contact</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for off in Supplier %}
+                                                    <tr>
+                                                        <td>
+                                                            {{ off.username }}
+                                                        </td>
+                                                        <td>
+                                                            {{ off.contact }}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+            </div>
+        </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static "js/lib/circle-progress/circle-progress.min.js" %}"></script>
+    <script src="{% static "js/lib/circle-progress/circle-progress-init.js" %}"></script>
+
+    <!--  flot-chart js -->
+    <!-- <script src="{% static "js/lib/flot-chart/jquery.flot.js" %}"></script>
+    <script src="{% static "js/lib/flot-chart/jquery.flot.resize.js" %}"></script>
+    <script src="{% static "js/lib/flot-chart/flot-chart-init.js" %}"></script>
+     --><!-- // flot-chart js -->
+    <script src="{% static "js/lib/chart-js/Chart.bundle.js" %}"></script>
+
+    <script src="{% static "js/lib/weather/jquery.simpleWeather.min.js" %}"></script>
+    <script src="{% static "js/lib/weather/weather-init.js" %}"></script>
+    <script src="{% static "js/lib/owl-carousel/owl.carousel.min.js" %}"></script>
+    <script src="{% static "js/lib/owl-carousel/owl.carousel-init.js" %}"></script>
+    <script src="{% static "js/scripts.js" %}"></script>
+    <script type="text/javascript">
+        var expected_capacity = {{ shelter.expected_capacity|safe }};
+        var capacity_occupied = {{ shelter.capacity_occupied|safe }};
+        var available = {{ shelter.total_capacity_of_people|safe }} - capacity_occupied - expected_capacity; 
+    </script>
+    <script type="text/javascript">
+        var ctx = document.getElementById("pieChart");
+        ctx.height = 300;
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: [capacity_occupied, expected_capacity, available],
+                    backgroundColor: [
+                        "rgba(0, 123, 255,0.9)",
+                        "rgba(0, 123, 255,0.7)",
+                        "rgba(0, 123, 255,0.5)"
+                    ],
+                    hoverBackgroundColor: [
+                        "rgba(0, 123, 255,0.9)",
+                        "rgba(0, 123, 255,0.7)",
+                        "rgba(0, 123, 255,0.5)"
+                    ]
+
+                }],
+                labels: [
+                    "Occupied",
+                    "Allocated",
+                    "Available"
+                ]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+    <!-- scripit init-->
+{% endblock %}
