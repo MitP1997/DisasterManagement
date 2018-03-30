@@ -220,7 +220,7 @@ class CivilianUpdateShelterDetailView(DetailView):
         return redirect('shelter-updated-successfully') ##TODO update final redirect
 
 class RegisterAtShelterFormView(FormView):
-    template_name = "register_at_shelter.html"
+    template_name = "Official-Portal/register_at_shelter.html"
     form_class = CivilianAtShelterForm
     success_url = "/registered-at-shelter-successfully/"
 
@@ -252,7 +252,7 @@ class RegisterAtShelterFormView(FormView):
 
 ## TODO show the list of members and the count of that particular family before submission
 class AllocationAtShelterFormView(FormView):
-    template_name = "allocate_at_shelter.html"
+    template_name = "Official-Portal/allocate_at_shelter.html"
     form_class = CivilianAllocationForm
     success_url = "/allocated-at-shelter-successfully/"
 
@@ -265,8 +265,10 @@ class AllocationAtShelterFormView(FormView):
         logger.info('called get context')
         context=super(AllocationAtShelterFormView,self).get_context_data()
         form=self.get_form(self.form_class)
+        context["shelter"] = Shelter.objects.get(id=self.kwargs.get('pk'))
         context['form']=form
         context['time']=timezone.now()
+        print context
         return context
 
     def post(self, request, *args, **kwargs):
@@ -296,7 +298,7 @@ class AllocationAtShelterFormView(FormView):
 
     def form_valid(self, form, form_object):
         # Additional system user registration functionaity here (Maybe an Email??)
-        return super(AllocationAtShelterFormView, self).form_valid(form)
+        return super(AllocationAtShelterFormView, self).form_valid(form, form_object)
 
 class Globals():
     response = {}

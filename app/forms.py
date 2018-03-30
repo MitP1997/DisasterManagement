@@ -36,117 +36,135 @@ class CivilianRegistrationForm(forms.Form):
         super(CivilianRegistrationForm,self).__init__(*args,**kwargs)
         self.fields['family_id']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
-                'title':'Family ID'
+                'title':'Family ID',
+                'class':'form-control' 
             }),
             required=False,
         )
         self.fields['aadhar_number']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
-                'title':'Aadhar Number'
+                'title':'Aadhar Number',
+                'class':'form-control'
             }),
             required=True,
         )
         self.fields['first_name']=forms.CharField(
             max_length=30,
             widget=forms.TextInput(attrs={
-                'title':'First Name'
+                'title':'First Name',
+                'class':'form-control'
             }),
         )
         self.fields['middle_name']=forms.CharField(
             max_length=30,
             widget=forms.TextInput(attrs={
-                'title':'Middle Name'
+                'title':'Middle Name',
+                'class':'form-control'
             }),
             required=False,
         )
         self.fields['last_name']=forms.CharField(
             max_length=30,
             widget=forms.TextInput(attrs={
-                'title':'Last Name'
+                'title':'Last Name',
+                'class':'form-control'
             }),
         )
         self.fields['contact']=forms.CharField(
             max_length=100,
             widget=forms.TextInput(attrs={
-                'title':'Contact '
+                'title':'Contact ',
+                'class':'form-control'
             }),
             required=True,
         )
         self.fields['dob']=forms.DateField(
             widget=forms.DateInput(attrs={
-                'title':'Date of Birth'
+                'title':'Date of Birth',
+                'class':'form-control'
             }),
             required=True,
         )
         self.fields['gender']=forms.CharField(
             max_length=10,
             widget=forms.Select(choices = GENDER_CHOICES, attrs={
-                'title':'Gender'
+                'title':'Gender',
+                'class':'form-control'
             }),
         )
         self.fields['blood_group']=forms.CharField(
             widget=forms.TextInput(attrs={
-                'title':'Blood Group'
+                'title':'Blood Group',
+                'class':'form-control'
             }),
             required=True,
         )
         self.fields['address_line_1']=forms.CharField(
             max_length=100,
             widget=forms.TextInput(attrs={
-                'title':'Address Line 1'
+                'title':'Address Line 1',
+                'class':'form-control'
             }),
             required=True,
         )
         self.fields['address_line_2']=forms.CharField(
             max_length=100,
             widget=forms.TextInput(attrs={
-                'title':'Address Line 2'
+                'title':'Address Line 2',
+                'class':'form-control'
             }),
             required=False,
         )
         self.fields['address_line_3']=forms.CharField(
             max_length=100,
             widget=forms.TextInput(attrs={
-                'title':'Address Line 3 '
+                'title':'Address Line 3 ',
+                'class':'form-control'
             }),
             required=False,
         )
         self.fields['city']=forms.CharField(
             max_length=100,
             widget=forms.TextInput(attrs={
-                'title':'City'
+                'title':'City',
+                'class':'form-control'
             }),
             required=True,
         )
         self.fields['state']=forms.CharField(
             max_length=100,
             widget=forms.TextInput(attrs={
-                'title':'State'
+                'title':'State',
+                'class':'form-control'
             }),
             required=True,
         )
         self.fields['country']=forms.CharField(
             max_length=100,
             widget=forms.TextInput(attrs={
-                'title':'Country'
+                'title':'Country',
+                'class':'form-control'
             }),
             required=True,
         )
         self.fields['pincode']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
-                'title':'Pincode'
+                'title':'Pincode',
+                'class':'form-control'
             }),
             required=True,
         )
         self.fields['latitude']=forms.DecimalField(
             widget=forms.NumberInput(attrs={
-                'title':'Latitude'
+                'title':'Latitude',
+                'class':'form-control'
             }),
             required=True,
         )
         self.fields['longitude']=forms.DecimalField(
             widget=forms.NumberInput(attrs={
-                'title':'Longitude'
+                'title':'Longitude',
+                'class':'form-control'
             }),
             required=True,
         )
@@ -160,19 +178,22 @@ class SystemUserRegistrationForm(forms.Form):
         super(SystemUserRegistrationForm,self).__init__(*args,**kwargs)
         self.fields['aadhar_number']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
-                'title':'Aadhar Number'
+                'title':'Aadhar Number',
+                'class':'form-control'
             }),
             required=True,
         )
         self.fields['password']=forms.CharField(
             widget=forms.PasswordInput(attrs={
-                'title':'Password'
+                'title':'Password',
+                'class':'form-control'
             }),
             required=True,
         )
         self.fields['confirm_password']=forms.CharField(
             widget=forms.PasswordInput(attrs={
-                'title':'Confirm Password'
+                'title':'Confirm Password',
+                'class':'form-control'
             }),
             required=True,
         )
@@ -196,13 +217,15 @@ class CivilianAtShelterForm(forms.Form):
         super(CivilianAtShelterForm,self).__init__(*args,**kwargs)
         self.fields['aadhar_number']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
-                'title':'Aadhar Number'
+                'title':'Aadhar Number',
+                'class':'form-control'
             }),
             required=False,
         )
         self.fields['mobile_number']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
-                'title':'Mobile Number'
+                'title':'Mobile Number',
+                'class':'form-control'
             }),
             required=False,
         )
@@ -228,22 +251,25 @@ class CivilianAllocationForm(forms.Form):
     """
     def __init__(self,*args,**kwargs):
         self.system_user=kwargs.pop('system_user',None)
-        super(CivilianAtShelterForm,self).__init__(*args,**kwargs)
+        super(CivilianAllocationForm,self).__init__(*args,**kwargs)
         self.fields['aadhar_number']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
-                'title':'Aadhar Number'
+                'title':'Aadhar Number',
+                'class':'form-control'
             }),
             required=False,
         )
         self.fields['mobile_number']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
-                'title':'Mobile Number'
+                'title':'Mobile Number',
+                'class':'form-control'
             }),
             required=False,
         )
         self.fields['count'] = forms.IntegerField(
             widget=forms.NumberInput(attrs={
-                'title':'Total packets given'
+                'title':'Total packets given',
+                'class':'form-control'
             }),
             required=True,
         )
@@ -257,13 +283,15 @@ class LoginForm(forms.Form):
         super(LoginForm,self).__init__(*args,**kwargs)
         self.fields['aadhar_number']=forms.IntegerField(
             widget=forms.NumberInput(attrs={
-                'title':'Aadhar Number'
+                'title':'Aadhar Number',
+                'class':'form-control'
             }),
             required=True,
         )
         self.fields['password']=forms.CharField(
             widget=forms.PasswordInput(attrs={
-                'title':'Password'
+                'title':'Password',
+                'class':'form-control'
             }),
             required=True,
         )

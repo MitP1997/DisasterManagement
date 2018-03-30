@@ -229,6 +229,7 @@
         var expected_capacity = {{ shelter.expected_capacity|safe }};
         var capacity_occupied = {{ shelter.capacity_occupied|safe }};
         var available = {{ shelter.total_capacity_of_people|safe }} - capacity_occupied - expected_capacity; 
+        
     </script>
     <script type="text/javascript">
         var ctx = document.getElementById("pieChart");
