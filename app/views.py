@@ -131,7 +131,6 @@ class AdminCivilians(ListView):
 class AdminSuppliers(ListView):
     template_name = 'Admin-Portal/admin_suppliers.html'
     model = SupplierLogs
-    paginate_by = 5
     context_object_name = 'suppliers_list'
 
     def get_context_data(self, **kwargs):
@@ -184,7 +183,7 @@ class OfficialCivilians(ListView):
 class CivilianRegistrationFormView(FormView):
     template_name = 'civilian_register.html'
     form_class = CivilianRegistrationForm
-    success_url = '/civilian-registered-successfully/'
+    success_url = '/civilian-register/'
 
     def get_form_kwargs(self):
         logger.info('called get form kwargs')
@@ -212,7 +211,7 @@ class CivilianRegistrationFormView(FormView):
 class SystemUserRegistrationFormView(FormView):
     template_name = "system_user_register.html"
     form_class = SystemUserRegistrationForm
-    success_url = "/system-user-registered-successfully/"
+    success_url = "/login/"
 
     def get_form_kwargs(self):
         logger.info('called get form kwargs')
@@ -290,7 +289,11 @@ class CivilianUpdateShelterDetailView(DetailView):
 class RegisterAtShelterFormView(FormView):
     template_name = "Official-Portal/register_at_shelter.html"
     form_class = CivilianAtShelterForm
-    success_url = "/registered-at-shelter-successfully/"
+    success_url = "/official-civilians/"
+
+
+    def get(self, request, *args, **kwargs):
+        self.success_url =  "/official-civilians/"+self.kwargs.get('pk')
 
     def get_form_kwargs(self):
         logger.info('called get form kwargs')
@@ -373,7 +376,7 @@ class AllocationAtShelterFormView(FormView):
         return super(AllocationAtShelterFormView, self).form_valid(form, form_object)
 
 class ShelterRegistrationFormView(FormView):
-    template_name = "shelter_register.html"
+    template_name = "Admin-Portal/shelter_register.html"
     form_class = ShelterRegistrationForm
     success_url = "/shelter-register/"
 

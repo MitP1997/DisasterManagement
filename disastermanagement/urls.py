@@ -29,7 +29,6 @@ urlpatterns = [
     url(r'^admin-officials/$', user_is_admin(login_required(AdminOfficals.as_view())), name='official-details'),
     url(r'^admin-civilians/$', user_is_admin(login_required(AdminCivilians.as_view())), name='civilian-home'),
     url(r'^admin-shelter/(?P<pk>\d+)/$', user_is_admin(login_required(AdminShelter.as_view())), name='shelter-details-admin'),
-
     url(r'^shelter-register/$', user_is_admin(login_required(ShelterRegistrationFormView.as_view())), name='shelter-register'),
 
     url(r'^official-civilians/(?P<pk>\d+)/$', user_is_operator(login_required(OfficialCivilians.as_view())), name='civilian-shelter'),
@@ -46,7 +45,7 @@ urlpatterns = [
     url(r'add-adhoc/',csrf_exempt(AddAdHoc.as_view()),name='add_adhoc'),
     url(r'get-civilian-data/',csrf_exempt(GetCivilianData.as_view()),name='get_civilian_data'),
 
-    url(r'supplier-home/',user_is_supplier(login_required(SupplierFormView.as_view())),name='supply_home'),
+    url(r'supplier-home/',SupplierFormView.as_view(),name='supply_home'),
 
     url(r'logout/',login_required(UserLogout.as_view()),name='logout'),
     url(r'fcm_insert/',csrf_exempt(test.as_view())),

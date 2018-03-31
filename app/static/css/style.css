@@ -1928,7 +1928,7 @@ footer p {
   height: 42px;
   border-radius: 0px;
   box-shadow: none;
-  border-color: #e7e7e7;
+  border-color: #aba9a9;
   font-family: 'Roboto', sans-serif;
 }
 .form-control:hover {
@@ -3676,9 +3676,9 @@ tbody tr td:last-child {
   fill: #e6a1f2;
 }
 body {
+  background: rgba(105, 130, 252, 0.54);
   font-family: 'Roboto', sans-serif;
-  background: rgba(88, 115, 254, 0.04);
-  color: #868e96;
+  color: #0d365f;
   font-size: 14px;
 }
 a,
