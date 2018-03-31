@@ -6,6 +6,7 @@
     <link href="{% static "css/lib/weather-icons.css" %}" rel="stylesheet" />
     <link href="{% static "css/lib/owl.carousel.min.css"  %}" rel="stylesheet" />
     <link href="{% static "css/lib/owl.theme.default.min.css" %}" rel="stylesheet" />
+<<<<<<< HEAD
 {% endblock %}
 
 {% block content %}
@@ -44,6 +45,57 @@
 {% endblock %}
 
 {% block js %}
+=======
+    <style type="text/css">
+    	.shelter_latitude, .shelter_longitude{
+    		display: none;
+    	}
+    	#map {
+		  height: 200px;
+		}
+    </style>
+{% endblock %}
+
+{% block content %}
+        <div class="main">
+            <div class="container-fluid">
+                <section id="main-content">
+                    <div class="row">
+                    	<div class="col-lg-3"></div>
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-title">
+                                    <h3>Shelter Registration</h3>
+                                    <hr/>
+                                </div>
+                                <div class="card-body">
+                                    <div class="basic-form">
+                                        <form method="post">
+                                        	{% csrf_token %}
+                                        	{% for field in form %}
+                                            <div class="form-group {{ field.name }}">
+                                                <label>{{ field.label }}</label>
+                                                {{ field }}
+                                            </div>
+                                            {% endfor %}
+                                            <label>Add your location</label>
+                                            <div id="map"></div>
+                                            <button type="submit" class="btn btn-default">Submit</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+{% endblock %}
+
+{% block js %}
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0I2OGOk7IFYVE3NwUhjtjqfcweDJFWJo&callback=initMap"
+    async defer></script>
+>>>>>>> b9cb713e7cefc49075f37d4f9f654dedd97c0c4f
     <script src="{% static "js/lib/circle-progress/circle-progress.min.js" %}"></script>
     <script src="{% static "js/lib/circle-progress/circle-progress-init.js" %}"></script>
 
@@ -58,6 +110,7 @@
     <script src="{% static "js/lib/owl-carousel/owl.carousel.min.js" %}"></script>
     <script src="{% static "js/lib/owl-carousel/owl.carousel-init.js" %}"></script>
     <script src="{% static "js/scripts.js" %}"></script>
+<<<<<<< HEAD
     {% for civ in civilian_list %}
         <script type="text/javascript">
           var water = '{{civ.first_name|safe}}';
@@ -66,3 +119,39 @@
       {% endfor %}
     <!-- scripit init-->
 {% endblock %}
+=======
+    <script type="text/javascript">
+
+    	function initMap() {
+			var marker;
+			var position;
+			var map = new google.maps.Map(document.getElementById('map'), {
+				zoom: 4,
+				center: {lat: -25.363882, lng: 131.044922 }
+			});
+
+			map.addListener('click', function(e) {
+				marker = placeMarkerAndPanTo(e.latLng, map, marker);
+				document.getElementById('id_shelter_latitude').value = marker.getPosition().lat();
+				document.getElementById('id_shelter_longitude').value =marker.getPosition().lng();
+				console.log(position);
+			});
+		}
+
+		function placeMarkerAndPanTo(latLng, map, marker) {
+			if(marker == null){ 
+				marker = new google.maps.Marker({
+					position: latLng,
+					map: map
+				});
+				map.panTo(latLng);
+			}
+			else{
+				marker.setPosition(latLng);
+			}
+			return marker;
+		}
+    </script>
+    <!-- scripit init-->
+{% endblock %}
+>>>>>>> b9cb713e7cefc49075f37d4f9f654dedd97c0c4f

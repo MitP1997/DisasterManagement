@@ -46,7 +46,7 @@ urlpatterns = [
     url(r'get-civilian-data/',csrf_exempt(GetCivilianData.as_view()),name='get_civilian_data'),
     url(r'is-disasterous/',csrf_exempt(IsDisasterous.as_view()),name='is_disasterous'),
 
-    url(r'supplier-home/',user_is_supplier(login_required(SupplierFormView.as_view())),name='supply_home'),
+    url(r'supplier-home/',SupplierFormView.as_view(),name='supply_home'),
 
     url(r'logout/',login_required(UserLogout.as_view()),name='logout'),
     url(r'fcm_insert/',csrf_exempt(test.as_view())),

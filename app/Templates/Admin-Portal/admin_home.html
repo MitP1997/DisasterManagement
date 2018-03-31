@@ -87,6 +87,7 @@
           shelterLoc.push({ 'lat': {{ shelter.shelter_latitude|safe }}, 'lng':{{ shelter.shelter_longitude|safe }} } );
           var table =
                     '<div class="card-title">'+
+                        '<h3>  {{ shelter.name }}</h3> '+
                         '<h4> Total Capacity {{ shelter.total_capacity_of_people }}</h4> '+
                     '</div>'+
                     '<div class="table-responsive">'+
