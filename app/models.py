@@ -226,7 +226,7 @@ class Civilians(models.Model):
     latitude = models.DecimalField(max_digits=9,decimal_places=6)
     longitude = models.DecimalField(max_digits=9,decimal_places=6)
     block = models.ForeignKey(BlocksData, blank = True, null = True)
-    device_id = models.CharField(max_length=500, blank=True, null=True)
+    device_id = models.CharField(max_length=500, blank=True, null=True,default=0)
 
     def save(self):
         self.block = BlocksData().get_block(self.latitude, self.longitude)

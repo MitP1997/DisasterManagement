@@ -29,8 +29,8 @@
 
     <link href="{% static "css/lib/helper.css" %}" rel="stylesheet">
     <link href="{% static "css/style.css" %}" rel="stylesheet">
-    <style type="text/css">
-        .skiptranslate{
+      <style type="text/css">
+        .skiptranslate, .goog-te-spinner-pos{
           display: none;
         }
         .skiptranslate.goog-te-gadget{
@@ -46,10 +46,11 @@
 
   <body>
 
+
     <div class="sidebar sidebar-hide-to-small sidebar-shrink sidebar-gestures">
       <div class="nano">
         <div class="nano-content">
-          <div class="logo"><a href="index.html"><!-- <img src="{% static "/images/logo.png" alt="" /> --><span>DRAP</span></a></div>
+          <div class="logo"><a href="index.html"><!-- <img src="{% static "/images/logo.png" alt="" /> --><span>NDMP</span></a></div>
           <ul>
             <li class="active"><a href="/admin-home/"><i class="ti-map"></i>Dashboard</a>
             <!-- <li class="label">Apps</li> -->
@@ -61,6 +62,7 @@
               </ul>
             </li>
             <li><a href="/admin-civilians/"><i class="ti-user"></i> Civilians </a></li>
+            <li><a href="/shelter-register/"><i class="ti-user"></i> Add Shelters </a></li>
             <li><a href="/admin-officials/"><i class="ti-shield"></i> Officials</a></li>
             <li><a href="/admin-supplier/"><i class="ti-truck"></i> Suppliers</a></li>
             <li><a href="/logout/"><i class="ti-close"></i> Logout</a></li>
@@ -82,7 +84,6 @@
                 <span class="line"></span>
               </div>
             </div>
-
             <div class="float-right">
               <ul>
 
@@ -91,9 +92,11 @@
                 </li>
               </ul>
             </div>
+          </div>
         </div>
       </div>
     </div>
+
     <div class="content-wrap">
     {% block content %}
     {% endblock %}
@@ -115,23 +118,11 @@
     <!-- sidebar -->
     <script src="{% static "js/lib/bootstrap.min.js" %}"></script>
     <!-- bootstrap -->
-
+<!--
     <script src="{% static "js/lib/morris-chart/raphael-min.js" %}"></script>
     <script src="{% static "js/lib/morris-chart/morris.js" %}"></script>
-    <script src="{% static "js/lib/morris-chart/morris-init.js" %}"></script>
+    <script src="{% static "js/lib/morris-chart/morris-init.js" %}"></script> -->
 
-    <script src="{% static "/js/lib/flot-chart/excanvas.min.js" %}"></script>
-    <script src="{% static "/js/lib/flot-chart/jquery.flot.js" %}"></script>
-    <!-- <script src="{% static "/js/lib/flot-chart/jquery.flot.pie.js" %}"></script>
-    <script src="{% static "/js/lib/flot-chart/jquery.flot.time.js" %}"></script>
-    <script src="{% static "/js/lib/flot-chart/jquery.flot.stack.js" %}"></script>
-    <script src="{% static "/js/lib/flot-chart/jquery.flot.resize.js" %}"></script>
-    <script src="{% static "/js/lib/flot-chart/jquery.flot.crosshair.js" %}"></script>
-    <script src="{% static "/js/lib/flot-chart/curvedLines.js" %}"></script>
-    <script src="{% static "/js/lib/flot-chart/flot-tooltip/jquery.flot.tooltip.min.js" %}"></script> -->
-    <script src="{% static "/js/lib/flot-chart/flot-chart-init.js" %}"></script>
-    <!-- // flot-chart js -->
-    <script src="{% static "/js/scripts.js" %}"></script>
 
     <script type="text/javascript">
         function googleTranslateElementInit() {

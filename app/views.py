@@ -32,63 +32,65 @@ from django.db.models import Sum
 logging.basicConfig(level=logging.INFO)
 logger=logging.getLogger(__name__)
 
-# class GooglePlacesApi(View):
-#     gmaps = googlemaps.Client(key='AIzaSyA8qHwF1krHNFP0N8A4gZEnyLLSvO9iPcw')
-#
-#     def get(self, request, *args, **kwargs):
-#
-#         query_result = self.getNearbyHospitals("London","USA")
-#         data = []
-#         if query_result.has_attributions:
-#             print query_result.html_attributions
-#
-#         for place in query_result.places:
-#             # Returned *1 page* of places from a query are place summaries.
-#             data['name'] = place.name
-#             data['loc'] = place.geo_location
-#             data['id'] = place.place_id
-#
-#             place.get_details()
-#             # Referencing any of the attributes below, prior to making a call to
-#             # get_details() will raise a googleplaces.GooglePlacesAttributeError.
-#             data['details'] =place.details # A dict matching the JSON response from Google.
-#             data['num'] = place.local_phone_number
-#             print place.international_phone_number
-#             data['website'] = place.website
-#             data['url'] = place.url
-#
-#         return HttpResponse(data)
-#
-#
-#     def testQuery(query_result):
-#         if query_result.has_attributions:
-#             print query_result.html_attributions
-#
-#         for place in query_result.places:
-#             # Returned *1 page* of places from a query are place summaries.
-#             print place.name
-#             print place.geo_location
-#             print place.place_id
-#
-#             place.get_details()
-#             # Referencing any of the attributes below, prior to making a call to
-#             # get_details() will raise a googleplaces.GooglePlacesAttributeError.
-#             print place.details # A dict matching the JSON response from Google.
-#             print place.local_phone_number
-#             print place.international_phone_number
-#             print place.website
-#             print place.url
-#
-#
-#     def getNearbyHospitals(self, latitude, longitude):
-#         geocode_result = self.gmaps.geocode({latitude,longitude})
-#         location_ = geocode_result[0]['geometry']['location']
-#
-#         # query_result = google_places.nearby_search(
-#         # location=''+latitude+','+longitude, keyword='hosital',
-#         # radius=20000, types=[types.TYPE_FOOD])
-#         # query_result_type_hospital = self.gmaps.places(location=''+latitude+','+longitude,  radius=20000, types='hospital')
-#         return query_result_type_health = self.gmaps.places_nearby(location=location_,keyword = 'health',rank_by='distance',type='hospital')
+class GooglePlacesApi(View):
+    gmaps = googlemaps.Client(key='AIzaSyA8qHwF1krHNFP0N8A4gZEnyLLSvO9iPcw')
+
+    def get(self, request, *args, **kwargs):
+
+        query_result = self.getNearbyHospitals(7.543,93.45)
+        data = []
+        print(query_result)
+        # if query_result.has_attributions:
+        #     print query_result.html_attributions
+        #
+        # for place in query_result.places:
+        #     # Returned *1 page* of places from a query are place summaries.
+        #     data['name'] = place.name
+        #     data['loc'] = place.geo_location
+        #     data['id'] = place.place_id
+        #
+        #     place.get_details()
+        #     # Referencing any of the attributes below, prior to making a call to
+        #     # get_details() will raise a googleplaces.GooglePlacesAttributeError.
+        #     data['details'] =place.details # A dict matching the JSON response from Google.
+        #     data['num'] = place.local_phone_number
+        #     print place.international_phone_number
+        #     data['website'] = place.website
+        #     data['url'] = place.url
+
+        return HttpResponse(query_result)
+
+
+    def testQuery(query_result):
+        if query_result.has_attributions:
+            print query_result.html_attributions
+
+        for place in query_result.places:
+            # Returned *1 page* of places from a query are place summaries.
+            print place.name
+            print place.geo_location
+            print place.place_id
+
+            place.get_details()
+            # Referencing any of the attributes below, prior to making a call to
+            # get_details() will raise a googleplaces.GooglePlacesAttributeError.
+            print place.details # A dict matching the JSON response from Google.
+            print place.local_phone_number
+            print place.international_phone_number
+            print place.website
+            print place.url
+
+
+    def getNearbyHospitals(self, latitude, longitude):
+        geocode_result = self.gmaps.geocode({latitude,longitude})
+        location_ = (latitude,longitude)
+        print(location_ )
+        # query_result = google_places.nearby_search(
+        # location=''+latitude+','+longitude, keyword='hosital',
+        # radius=20000, types=[types.TYPE_FOOD])
+        # query_result_type_hospital = self.gmaps.places(location=''+latitude+','+longitude,  radius=20000, types='hospital')
+        query_result_type_health = self.gmaps.places_nearby(location=(9.1573175, 151.207090),keyword = 'food',radius=200000,type='restaurant')
+        return query_result_type_health
 
 class AdminHome(ListView):
     template_name = 'Admin-Portal/admin_home.html'
@@ -144,7 +146,6 @@ class AdminSuppliers(ListView):
 class AdminOfficals(ListView):
     template_name = 'Admin-Portal/admin_officials.html'
     model = SystemUsers
-    paginate_by = 5
     context_object_name = 'officials_list'
 
     def get_context_data(self, **kwargs):
@@ -315,10 +316,13 @@ class RegisterAtShelterFormView(FormView):
             current_shelter = request.user.shelter
             current_shelter.updateOccupiedCapacity(1)
             assigned_shelter = civilian.assigned_shelter
-            assigned_shelter.updateExpectedCapacity(-1)
-            return self.form_valid(register_at_shelter_form, system_user)
+            if assigned_shelter is None:
+                civilian.assigned_shelter = request.user.shelter
+            else:
+                assigned_shelter.updateExpectedCapacity(-1)
+            return self.form_valid(register_at_shelter_form)
 
-    def form_valid(self, form, form_object):
+    def form_valid(self, form):
         # Additional system user registration functionaity here (Maybe an Email??)
         return super(RegisterAtShelterFormView, self).form_valid(form)
 
@@ -373,7 +377,7 @@ class AllocationAtShelterFormView(FormView):
         return super(AllocationAtShelterFormView, self).form_valid(form, form_object)
 
 class ShelterRegistrationFormView(FormView):
-    template_name = "shelter_register.html"
+    template_name = "Admin-Portal/shelter_register.html"
     form_class = ShelterRegistrationForm
     success_url = "/shelter-register/"
 
@@ -387,6 +391,7 @@ class ShelterRegistrationFormView(FormView):
         context=super(ShelterRegistrationFormView,self).get_context_data()
         form=self.get_form(self.form_class)
         context['form']=form
+        context["shelter_list"] = Shelter.objects.filter()
         context['time']=timezone.now()
         return context
 
@@ -733,13 +738,10 @@ class GetShelters(View):
     def post(self,request,*args,**kwargs):
         latitude = request.POST.get('latitude')
         longitude = request.POST.get('longitude')
-
+        is_disasterous = False
         block = BlocksData().get_block(latitude,longitude)
-    # if block.in_disaster == True:
-    #     nearest_block = BlocksDict.objects.get(block = block).shelter
-    #     serialized_block = serialize('json', [nearest_block])
-    #     return JsonResponse({'success': True, 'data': json.loads(serialized_block)})
-    # else :
+        if block.in_disaster == True:
+            is_disasterous = True
         j=0
         shelters = Shelter.objects.all()
         shelter_dict = {}
@@ -751,15 +753,12 @@ class GetShelters(View):
         logger.info(sorted_shelters)
         #sorted_shelters = {'asd':sorted_shelters}
         serialized_sorted_shelters = serialize('json',sorted_shelters)
-        return JsonResponse({'success': True, 'data': json.loads(serialized_sorted_shelters)})
+        return JsonResponse({'success': True,'is-disasterous':is_disasterous, 'data': json.loads(serialized_sorted_shelters)})
 
 class AddAdHoc(View):
 
     def post(self, request, *args, **kwargs):
-        body_unicode = request.body.decode('utf-8')
-        request_data = json.loads(body_unicode)
-
-        shelter = Shelter.create(request.POST)
+        shelter = Shelter().create(request.POST)
 
         response_data = {}
         response_data['name'] = request.POST.get('name')
@@ -784,6 +783,17 @@ class GetCivilianData(View):
         if not aadhar_valid and not phone_valid:
                 return JsonResponse({'success': False})
         return JsonResponse({'success': True, 'data':json.loads(serialize('json',[civilian]))})
+
+class IsDisasterous(View):
+    def post(self, request, *args, **kwargs):
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+        block = BlocksData().get_block(latitude,longitude)
+        if(block.in_disaster):
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False})
+
 
 '''
 API's end here

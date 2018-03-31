@@ -41,7 +41,7 @@
                                                         <td>
                                                             {{ civ.contact }}
                                                         </td>
-                                                        
+
                                                         <td>
                                                             {{ civ.aadhar_number }}
                                                         </td>
@@ -51,7 +51,7 @@
 
                                                     </tr>
                                                     {% endfor %}
-                                                    
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -87,7 +87,7 @@
                                                         <td>
                                                             {{ civ.contact }}
                                                         </td>
-                                                        
+
                                                         <td>
                                                             {{ civ.aadhar_number }}
                                                         </td>
@@ -97,7 +97,7 @@
 
                                                     </tr>
                                                     {% endfor %}
-                                                    
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -127,7 +127,7 @@
     <script src="{% static "js/lib/owl-carousel/owl.carousel.min.js" %}"></script>
     <script src="{% static "js/lib/owl-carousel/owl.carousel-init.js" %}"></script>
     <script src="{% static "js/scripts.js" %}"></script>
-    {% for civ in civilian_list %} 
+    {% for civ in civilian_list %}
         <script type="text/javascript">
           var water = '{{civilian_list.first_name|safe}}';
           console.log(water);
