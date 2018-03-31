@@ -195,6 +195,8 @@ class CivilianRegistrationFormView(FormView):
         logger.info('called get context')
         context=super(CivilianRegistrationFormView,self).get_context_data()
         form=self.get_form(self.form_class)
+        context["shelter"] = Shelter.objects.get(id=self.kwargs.get('pk'))
+
         context['form']=form
         return context
 
@@ -294,7 +296,9 @@ class RegisterAtShelterFormView(FormView):
 
 
     def get(self, request, *args, **kwargs):
+        print self.kwargs.get('pk')
         self.success_url =  "/official-civilians/"+self.kwargs.get('pk')
+        return super(RegisterAtShelterFormView,self).get(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         logger.info('called get form kwargs')
@@ -305,10 +309,12 @@ class RegisterAtShelterFormView(FormView):
         logger.info('called get context')
         context=super(RegisterAtShelterFormView,self).get_context_data()
         form=self.get_form(self.form_class)
+        context["shelter"] = Shelter.objects.get(id=self.kwargs.get('pk'))
         context['form']=form
         return context
 
     def post(self, request, *args, **kwargs):
+        self.success_url =  "/official-civilians/"+self.kwargs.get('pk')
         register_at_shelter_form= CivilianAtShelterForm(request.POST)
         if register_at_shelter_form.is_valid():
             try:
@@ -335,6 +341,11 @@ class AllocationAtShelterFormView(FormView):
     form_class = CivilianAllocationForm
     success_url = "/allocated-at-shelter-successfully/"
 
+    def get(self, request, *args, **kwargs):
+        print self.kwargs.get('pk')
+        self.success_url =  "/allocate-at-shelter/"+self.kwargs.get('pk')+"/"+self.kwargs.get('type')
+        return super(AllocationAtShelterFormView,self).get(request, *args, **kwargs)
+
     def get_form_kwargs(self):
         logger.info('called get form kwargs')
         kwargs=super(AllocationAtShelterFormView,self).get_form_kwargs()
@@ -350,6 +361,8 @@ class AllocationAtShelterFormView(FormView):
         return context
 
     def post(self, request, *args, **kwargs):
+
+        self.success_url =  "/allocate-at-shelter/"+self.kwargs.get('pk')+"/"+self.kwargs.get('type')
         allocate_at_shelter_form= CivilianAllocationForm(request.POST)
         if allocate_at_shelter_form.is_valid():
             try:
@@ -373,16 +386,45 @@ class AllocationAtShelterFormView(FormView):
                 allocation_to_family.updateOrCreateFirstAid(created,count,request.user.shelter)
             elif allocation_to_be_done == 'water':
                 allocation_to_family.updateOrCreateWater(created,count,request.user.shelter)
-            return self.form_valid(allocate_at_shelter_form, system_user)
+            return self.form_valid(allocate_at_shelter_form)
 
-    def form_valid(self, form, form_object):
+    def form_valid(self, form):
         # Additional system user registration functionaity here (Maybe an Email??)
-        return super(AllocationAtShelterFormView, self).form_valid(form, form_object)
+        return super(AllocationAtShelterFormView, self).form_valid(form)
 
+# class ShelterRegistrationFormView(FormView):
+#     template_name = "Admin-Portal/shelter_register.html"
+#     form_class = ShelterRegistrationForm
+#     success_url = "/shelter-register/"
+#
+#     def get_form_kwargs(self):
+#         logger.info('called get form kwargs')
+#         kwargs=super(ShelterRegistrationFormView,self).get_form_kwargs()
+#         return kwargs
+#
+#     def get_context_data(self, **kwargs):
+#         logger.info('called get context')
+#         context=super(ShelterRegistrationFormView,self).get_context_data()
+#         form=self.get_form(self.form_class)
+#         context['form']=form
+#         context["shelter_list"] = Shelter.objects.filter()
+#         context['time']=timezone.now()
+#         return context
+#
+#     def post(self, request, *args, **kwargs):
+#         shelter_registration_form= ShelterRegistrationForm(request.POST)
+#         if shelter_registration_form.is_valid():
+#             Shelter().create(shelter_registration_form)
+#             return self.form_valid(shelter_registration_form)
+#
+#     def form_valid(self, form):
+#         # Additional system user registration functionaity here (Maybe an Email??)
+#         return super(ShelterRegistrationFormView, self).form_valid(form)
 class ShelterRegistrationFormView(FormView):
     template_name = "Admin-Portal/shelter_register.html"
     form_class = ShelterRegistrationForm
     success_url = "/shelter-register/"
+
 
     def get_form_kwargs(self):
         logger.info('called get form kwargs')
@@ -393,8 +435,8 @@ class ShelterRegistrationFormView(FormView):
         logger.info('called get context')
         context=super(ShelterRegistrationFormView,self).get_context_data()
         form=self.get_form(self.form_class)
-        context['form']=form
         context["shelter_list"] = Shelter.objects.filter()
+        context['form']=form
         context['time']=timezone.now()
         return context
 
@@ -634,10 +676,17 @@ class BlockDictComputation(View):
 class ExecuteDRAP(View):
 
     def get(self, request, *args, **kwargs):
-        civilians = Civilians.objects.all()
-        for civilian in civilians:
-            assignShelter(civilian)
-        return
+        # civilians = Civilians.objects.all()
+        # for civilian in civilians:
+        #     self.assignShelter(civilian)
+        message = 'MoveToShelterB'
+        authkey = '206883AcCDhmjv5abefaa9'
+        url = 'http://api.msg91.com/api/sendhttp.php?authkey='+authkey+'&sender=SIHCBT&route=4&country=91&message=MoveToShelterA&unicode=1&mobiles=919619189124'
+        response = urllib2.urlopen(url).read()
+
+        devices = FCMDevice.objects.all()
+        devices.send_message(title="NotificationTitle", body=""+message)
+        return redirect('/admin-home/')
 
     def getNextRadialShelter(self,block_of_civilian,assigned_shelter):
         dist = []
@@ -675,12 +724,12 @@ class ExecuteDRAP(View):
                     assigned_shelter = r_shelter
         return assigned_shelter
 
-    def assignShelter(civilian):
+    def assignShelter(self,civilian):
         # TODO: Add assisting people count
         if civilian.assigned_shelter is not None:
             threshold = 0.9
             block_of_civilian = civilian.block
-            to_be_assigned_shelter = BlocksDict.object.get(block = block_of_civilian).shelter
+            to_be_assigned_shelter = BlocksDict.objects.get(block = block_of_civilian).shelter
             if to_be_assigned_shelter.is_full:
                 to_be_assigned_shelter = self.getNextRadialShelter(block_of_civilian,to_be_assigned_shelter)
             else:
@@ -690,7 +739,7 @@ class ExecuteDRAP(View):
 
             message = ""
             Alert().alertForShelterAssigning(civilian,to_be_assigned_shelter,message)
-            assignShelter(civilian)
+            self.assignShelter(civilian)
         else:
             return
 
@@ -700,9 +749,9 @@ class test(View):
     def get(self,request,*args,**kwargs):
         # print request.POST.get('device_id')
         devices = FCMDevice.objects.all()
-        devices.send_message(title="Title", body="Message")
+        # devices.send_message(title="Title", body="Message")
         devices.send_message(title="Title", body="Message", data={"test": "test"})
-        devices.send_message(data={"test": "test"})
+        # devices.send_message(data={"test": "test"})
         print("sent")
         return HttpResponse(json.dumps({"a":1,"b":2}))
 # class Notifications():
@@ -711,12 +760,12 @@ class test(View):
 
 class Alert():
     # TODO: Get Proper Message
-    def alertForShelterAssigning(civilian,shelter,message):
-        authkey = '196077A8m64pIIW5a72c40d'
-        url = 'http://api.msg91.com/api/sendhttp.php?authkey='+authkey+'&sender=SIHC18&route=4&country=91&message'+message+'&flash=1&unicode=1&mobiles=91'+civilian.contact
+    def alertForShelterAssigning(self,civilian,shelter,message):
+        authkey = '206883AcCDhmjv5abefaa9'
+        url = 'http://api.msg91.com/api/sendhttp.php?authkey='+authkey+'&sender=SIHC18&route=4&country=91&message'+message+'&unicode=1&mobiles=91'+str(civilian.contact)
         response = urllib2.urlopen(url).read()
 
-        devices = Civilians.objects.get(device_id = civilian.device_id)
+        devices = FCMDevice.objects.all()
         devices.send_message(title="NotificationTitle", body=""+message)
         # Notifications().notify(devices,"notification-body")
         return

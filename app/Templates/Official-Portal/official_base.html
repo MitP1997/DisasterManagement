@@ -26,7 +26,7 @@
     <link href="{% static "css/lib/themify-icons.css" %}" rel="stylesheet">
     <link href="{% static "css/lib/menubar/sidebar.css" %}" rel="stylesheet">
     <link href="{% static "css/lib/bootstrap.min.css" %}" rel="stylesheet">
-    
+
     <link href="{% static "css/lib/helper.css" %}" rel="stylesheet">
     <link href="{% static "css/style.css" %}" rel="stylesheet">
       <style type="text/css">
@@ -53,6 +53,7 @@
           <div class="logo"><a href="index.html"><!-- <img src="{% static "/images/logo.png" alt="" /> --><span>NDMP</span></a></div>
           <ul>
             <li><a href="/official-home/{{ shelter.id }}"><i class="ti-home"></i>My Shelter</a></li>
+            <li><a href="/official-add-civilian/{{ shelter.id }}"><i class="ti-user"></i>Add Civilians </a></li>
             <li><a class="sidebar-sub-toggle"><i class="ti-home"></i>  Allocation Of resources  <span class="sidebar-collapse-icon ti-angle-down"></span></a>
               <ul>
                   <li><a href="/allocate-at-shelter/{{ shelter.id }}/food">Food</a></li>
@@ -61,7 +62,7 @@
                   <li><a href="/allocate-at-shelter/{{ shelter.id }}/water">Water</a></li>
               </ul>
             </li>
-            
+
             </li>
             <li><a href="/official-civilians/{{ shelter.id }}"><i class="ti-user"></i> Civilians </a></li>
             <li><a href='/logout/'><i class="ti-close"></i> Logout</a></li>
@@ -117,12 +118,12 @@
     <!-- sidebar -->
     <script src="{% static "js/lib/bootstrap.min.js" %}"></script>
     <!-- bootstrap -->
-<!-- 
+<!--
     <script src="{% static "js/lib/morris-chart/raphael-min.js" %}"></script>
     <script src="{% static "js/lib/morris-chart/morris.js" %}"></script>
     <script src="{% static "js/lib/morris-chart/morris-init.js" %}"></script> -->
 
-       
+
     <script type="text/javascript">
         function googleTranslateElementInit() {
           new google.translate.TranslateElement({pageLanguage: 'bn', includedLanguages: 'bn,en,hi,ml,ta,te'}, 'google_translate_element');

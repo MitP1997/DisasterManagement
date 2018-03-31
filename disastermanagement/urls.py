@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^official-home/(?P<pk>\d+)/$', user_is_operator(login_required(OfficialShelter.as_view())), name='shelter-details-official'),
     url(r'^official-add-civilian/(?P<pk>\d+)/$', user_is_operator(login_required(RegisterAtShelterFormView.as_view())), name='civilian-register-shelter'),
     url(r'allocate-at-shelter/(?P<pk>\d+)/(?P<type>[a-z]+)/',user_is_operator(login_required(AllocationAtShelterFormView.as_view())),name='allocate_at_shelter'),
+    url(r'execute-drap/',ExecuteDRAP.as_view(),name='execute_drap'),
 
     url(r'make-blocks/',PreDRAPComputation.as_view(),name='pre_drap_comp'),
     url(r'compute-block-dict/',BlockDictComputation.as_view(),name='compute_block_dict'),

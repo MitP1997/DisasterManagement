@@ -42,7 +42,7 @@ class BlocksData(models.Model):
     in_disaster = models.BooleanField(default=False)
 
     def get_block(self, latitude, longitude):
-        block = BlocksData.objects.get(start_latitude__lte = latitude ,start_longitude__lte = longitude, end_latitude__gte = latitude, end_longitude__gte = longitude )
+        block = BlocksData.objects.get(start_latitude__lte = latitude ,start_longitude__lte = longitude, end_latitude__gt = latitude, end_longitude__gt = longitude )
         return block
 
     def create(self,start_lat,start_long,end_lat,end_long,x,y):
@@ -171,19 +171,19 @@ class Stocks(models.Model):
     def updateFirstAidPacketsAvailable(self,quantity):
         self.first_aid_packets_available=self.first_aid_packets_available+quantity
         if self.first_aid_packets_available < self.shelter.total_capacity_of_people:
-            self.updateFirstAidPacketsNeeded( self.total_capacity_of_people - self.first_aid_packets_available)
+            self.updateFirstAidPacketsNeeded( self.shelter.total_capacity_of_people - self.first_aid_packets_available)
         self.save()
 
     def updateBeddingPacketsAvailable(self,quantity):
         self.bedding_packets_available=self.bedding_packets_available+quantity
         if self.bedding_packets_available < self.shelter.total_capacity_of_people:
-            self.updateBeddingPacketsNeeded( self.total_capacity_of_people - self.bedding_packets_available)
+            self.updateBeddingPacketsNeeded( self.shelter.total_capacity_of_people - self.bedding_packets_available)
         self.save()
 
     def updateWaterAvailable(self,quantity):
         self.water_available=self.water_available+quantity
         if self.water_available < self.shelter.total_capacity_of_people:
-            self.updateWaterNeeded( self.total_capacity_of_people - self.water_available)
+            self.updateWaterNeeded( self.shelter.total_capacity_of_people - self.water_available)
         self.save()
 
     def __unicode__(self):
@@ -228,9 +228,9 @@ class Civilians(models.Model):
     block = models.ForeignKey(BlocksData, blank = True, null = True)
     device_id = models.CharField(max_length=500, blank=True, null=True,default=0)
 
-    def save(self):
-        self.block = BlocksData().get_block(self.latitude, self.longitude)
-        super(Civilians,self).save()
+    # def save(self):
+    #     self.block = BlocksData().get_block(self.latitude, self.longitude)
+    #     super(Civilians,self).save()
 
     def create(self,civilian_registration_form):
         try:
